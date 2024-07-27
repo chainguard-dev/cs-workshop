@@ -1,4 +1,5 @@
-FROM python:latest AS builder
+ARG IMAGE_REGISTRY="docker.io/library"
+FROM ${IMAGE_REGISTRY}/python:latest AS builder
 
 ENV LANG=C.UTF-8
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -12,7 +13,8 @@ COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-FROM python:latest
+ARG IMAGE_REGISTRY="docker.io/library"
+FROM ${IMAGE_REGISTRY}/python:latest
 
 WORKDIR /not-linky
 

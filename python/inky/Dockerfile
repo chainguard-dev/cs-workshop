@@ -1,4 +1,4 @@
-FROM cgr.dev/chainguard/python:latest-dev as builder
+FROM cgr.dev/chainguard/python:latest-dev AS builder
 
 ENV LANG=C.UTF-8
 ENV PYTHONDONTWRITEBYTECODE=1

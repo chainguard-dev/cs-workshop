@@ -1,4 +1,4 @@
-FROM python:latest as builder
+FROM python:latest AS builder
 
 ENV LANG=C.UTF-8
 ENV PYTHONDONTWRITEBYTECODE=1

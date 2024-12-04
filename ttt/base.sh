@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 SCRIPT_DIR=$(dirname "$(realpath "${BASH_SOURCE[0]}")")
 export DOCKER_CLI_HINTS=false
+export BATCAT="cat"
+if [ -x "$(command -v bat)" ]; then
+  export BATCAT="bat --map-syntax Dockerfile.*:Dockerfile"
+fi
 
 function banner() {
   # get the length of $1 string

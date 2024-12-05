@@ -1,6 +1,22 @@
 # Chainguard Train the Trainer Workshop
 
-## TODO: Add description and outline
+## Overview
+This repository contains the materials for the Chainguard Train the Trainer Workshop. The workshop is designed to help you understand the Chainguard platform and how to teach others about it. The workshop is broken down into the following sections:
+1. Chainguard Overview
+  * Explaining Chainguard Images to your teams
+2. Docker 102
+  * Deep dive into container images
+  * Hands on exercises to learn tactics needed for hardened, distroless-type images
+3. Chainguard Migration Basics
+  * Review the differences from using a Chainguard Image (Wolfi) and other Linux distributions
+  * Language Migration and Examples
+  * Walkthrough examples of various languages (Java, Python, etc) and understand how to leverage multi-stage build to minimalist secure image
+4. Debugging Tactics
+  * Learn various debugging strategies for Distroless images
+5. Image Tags
+  * Understand tags and Chainguard images
+6. CLI Tools and Demos 
+  * Understand the different CLI tools and how to gain knowledge from your Chainguard images (compare, tags, scan, SBOMs and more)
 
 ### Prerequisites
 It is expected that attendees have a working knowledge of containers, images, and the common tools used to build and run them such as the command line "docker run", "docker build", etc. A basic understanding of simple Dockerfiles and the concepts around pushing and pulling to registries is also required.

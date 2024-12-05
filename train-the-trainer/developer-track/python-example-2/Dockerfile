@@ -14,7 +14,7 @@ RUN echo "cp /lib/libapk.so $(find /lib -name 'libapk.so*')" > /add_apks.sh
 RUN echo "apk add --no-cache ${APK_LIST}" >> /add_apks.sh
 RUN echo "rm $(find /lib -name 'libapk.so*')" >> /add_apks.sh
 RUN cp $(find /lib -name 'libapk.so*') /lib/libapk.so
-USER 0
+USER 65532
 
 # Install desired Python packages
 RUN python -m venv venv
@@ -28,7 +28,6 @@ RUN pip install --upgrade pip setuptools wheel && \
 FROM cgr.dev/chainguard/python:latest
 
 WORKDIR /app
-COPY --from=dev add_apks.sh add_apks.sh
 COPY --from=dev /app/venv /app/venv
 COPY run.py run.py
 USER root
@@ -46,6 +45,6 @@ RUN --mount=type=bind,from=dev,target=/sbin/apk,source=/sbin/apk \
    --mount=type=bind,from=dev,target=/add_apks.sh,source=/add_apks.sh,rw \
    /bin/sh /add_apks.sh
 
-USER 0
+USER 65532
 ENV PATH="/app/venv/bin:$PATH"
 ENTRYPOINT ["python", "run.py"]

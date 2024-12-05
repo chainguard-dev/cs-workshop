@@ -1,0 +1,24 @@
+FROM cgr.dev/chainguard/python:latest-dev AS dev
+
+USER root
+
+WORKDIR /app
+
+RUN apk add mariadb-connector-c-dev mariadb
+RUN python -m venv venv
+ENV PATH="/app/venv/bin":$PATH
+
+# Install python packages
+RUN pip install --upgrade pip setuptools wheel && \
+   pip install --no-cache-dir mysqlclient
+
+FROM cgr.dev/chainguard/python:latest
+
+WORKDIR /app
+
+COPY run.py run.py
+COPY --from=dev /app/venv /app/venv
+
+ENV PATH="/app/venv/bin:$PATH"
+
+ENTRYPOINT ["python", "run.py"]

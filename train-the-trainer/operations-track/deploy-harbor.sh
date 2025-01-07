@@ -47,9 +47,22 @@ if [ "$CHAINGUARD_IMAGES" == "yes" ]; then
   read -p "Enter the registry URL (default is cgr.dev/cs-ttt-demo.dev): " REGISTRY_URL
   export REGISTRY_URL=${REGISTRY_URL:-cgr.dev/cs-ttt-demo.dev}
 
-  # Ask for pull token user and password
-  read -p "Enter the pull token user: " PULL_USER
-  read -p "Enter the pull token password: " PULL_PASS
+  # if .pull-token exists, source it
+  if [ -f .pull-token ]; then
+    echo ".pull-token file found, using token from there"
+    source .pull-token
+  else
+    echo "No .pull-token file found, please enter the pull token user and password"
+    read -p "Enter the pull token user: " PULL_USER
+    read -p "Enter the pull token password: " PULL_PASS
+
+    read -p "Do you want to save the pull token (in .pull-token) for future use? (YES/no): " SAVE_TOKEN
+    SAVE_TOKEN=${SAVE_TOKEN:-yes}
+    if [ "$SAVE_TOKEN" == "yes" ]; then
+      echo "export PULL_USER=$PULL_USER" > .pull-token
+      echo "export PULL_PASS=$PULL_PASS" >> .pull-token
+    fi
+  fi
 
   cat ${DEPLOY_DIR}/manifests/deploy-ingress-nginx.template | envsubst > ${DEPLOY_DIR}/manifests/deploy-ingress-nginx.yaml
   kubectl create ns ingress-nginx

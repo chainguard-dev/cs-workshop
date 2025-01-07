@@ -1,0 +1,8 @@
+externalURL: http://localhost
+expose:
+  type: ingress
+  tls:
+    enabled: false
+  ingress:
+    hosts:
+      core: localhost

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-DEPLOY_DIR="harbor-non-cg"
+DEPLOY_DIR="non-cg"
 
 # validate envsubst is installed
 if ! command -v envsubst &> /dev/null
@@ -27,42 +27,45 @@ then
     exit
 fi
 
-# Ask if using Chainguard Images or not (default is yes)
+read -p "Enter the Chainguard org name (default is cs-ttt-demo.dev): " ORG_NAME
+export ORG_NAME=${ORG_NAME:-cs-ttt-demo.dev}
+
 read -p "Are you using Chainguard images? (YES/no): " CHAINGUARD_IMAGES
 CHAINGUARD_IMAGES=${CHAINGUARD_IMAGES:-yes}
+
+# if .pull-token exists, source it
+if [ -f .pull-token ]; then
+  echo ".pull-token file found, using token from there"
+  source .pull-token
+else
+  echo "No .pull-token file found, please enter the pull token user and password"
+  read -p "Enter the pull token user: " PULL_USER
+  read -p "Enter the pull token password: " PULL_PASS
+
+  read -p "Do you want to save the pull token (in .pull-token) for future use? (YES/no): " SAVE_TOKEN
+  SAVE_TOKEN=${SAVE_TOKEN:-yes}
+  if [ "$SAVE_TOKEN" == "yes" ]; then
+    echo "export PULL_USER=$PULL_USER" > .pull-token
+    echo "export PULL_PASS=$PULL_PASS" >> .pull-token
+  fi
+fi
+
 
 # ask if we should start kind
 read -p "A Kubernetes cluster is required, do you want to start a new Kind cluster? (YES/no): " START_KIND
 START_KIND=${START_KIND:-yes}
 if [ "$START_KIND" == "yes" ]; then
-  kind create cluster --name harbor --config ${DEPLOY_DIR}/kind/config.yaml
+  kind create cluster --name harbor --config kind/config.yaml
   kubectl wait --for=condition=Ready node/harbor-control-plane --timeout=1m
 fi
 
 kubectl create ns harbor
 
+
 # if using Chainguard images, ask for the registry URL (default is cgr.dev/cs-ttt-demo.dev )
 if [ "$CHAINGUARD_IMAGES" == "yes" ]; then
-  DEPLOY_DIR="harbor-cg"
-  read -p "Enter the registry URL (default is cgr.dev/cs-ttt-demo.dev): " REGISTRY_URL
-  export REGISTRY_URL=${REGISTRY_URL:-cgr.dev/cs-ttt-demo.dev}
-
-  # if .pull-token exists, source it
-  if [ -f .pull-token ]; then
-    echo ".pull-token file found, using token from there"
-    source .pull-token
-  else
-    echo "No .pull-token file found, please enter the pull token user and password"
-    read -p "Enter the pull token user: " PULL_USER
-    read -p "Enter the pull token password: " PULL_PASS
-
-    read -p "Do you want to save the pull token (in .pull-token) for future use? (YES/no): " SAVE_TOKEN
-    SAVE_TOKEN=${SAVE_TOKEN:-yes}
-    if [ "$SAVE_TOKEN" == "yes" ]; then
-      echo "export PULL_USER=$PULL_USER" > .pull-token
-      echo "export PULL_PASS=$PULL_PASS" >> .pull-token
-    fi
-  fi
+  DEPLOY_DIR="cg"
+  export REGISTRY_URL="cgr.dev/${ORG_NAME}"
 
   cat ${DEPLOY_DIR}/manifests/deploy-ingress-nginx.template | envsubst > ${DEPLOY_DIR}/manifests/deploy-ingress-nginx.yaml
   kubectl create ns ingress-nginx
@@ -79,5 +82,6 @@ kubectl wait --for=condition=Ready -n ingress-nginx pod --selector=app.kubernete
 helm repo add harbor https://helm.goharbor.io
 helm upgrade --install harbor harbor/harbor -n harbor -f ${DEPLOY_DIR}/helm/values.yaml --wait
 
+cat terraform/terraform.templatevars | envsubst > terraform/terraform.tfvars
 echo "Harbor should now available at http://localhost/harbor"
 

@@ -1,5 +1,5 @@
 #! env bash
-. ../base.sh
+. ../../base.sh
 
 for i in $(docker ps -a --format '{{.Names}}' | grep java-example-); do
   docker rm -f $i
@@ -12,7 +12,7 @@ done
 
 clear
 banner "Step 1: Example of a SpringBoot application with a single stage build using the 'maven' image."
-pe "cd java-example-1-orig"
+pe "cd step1-orig"
 p "cat Dockerfile"
 $BATCAT Dockerfile
 pe "docker build . -t java-example:1"
@@ -23,7 +23,7 @@ echo
 wait
 clear
 banner "Step 2: Example of a SpringBoot application with a multi stage build using the 'maven' and 'eclipse-temurin' images."
-pe "cd ../java-example-2-orig-multi"
+pe "cd ../step2-orig-multi"
 p "cat Dockerfile"
 $BATCAT Dockerfile
 pe "docker build . -t java-example:2"
@@ -37,7 +37,7 @@ pe "grype java-example:2"
 wait
 clear
 banner "Step 3: Example of a SpringBoot application with a multi stage build using Chainguard 'maven' and 'jre' images."
-pe "cd ../java-example-3-cg-multi"
+pe "cd ../step3-cg-multi"
 p "cat Dockerfile"
 $BATCAT Dockerfile
 pe "docker build . -t java-example:3"

@@ -1,0 +1,17 @@
+# Use the latest node image
+FROM node:latest 
+
+# Set the environment variable to production
+ENV NODE_ENV=production 
+
+# Set the working directory
+WORKDIR /app 
+
+# Copy package.json and server.js to the working directory 
+COPY ["package.json", "server.js", "./"]
+
+# Install dependencies, excluding development dependencies
+RUN npm install --omit-dev
+
+# Run the application
+CMD [ "server.js" ]

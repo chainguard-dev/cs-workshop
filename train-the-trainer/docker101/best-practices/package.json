@@ -1,0 +1,16 @@
+{
+  "name": "Express Server",
+  "version": "1.0.0",
+  "description": "A server that allows getting and posting dummy data in JSON format",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.14.1",
+    "express": "^4.13.3"
+  }
+}

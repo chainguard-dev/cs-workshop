@@ -7,7 +7,7 @@
   - [Creating a Long Lived Private APK Repo Token](#creating-a-long-lived-private-apk-repo-token)
 
 ## Overview
-This directory contains examples for using the private apk repository to customize Chainguard images.  This example covers two scenarios:
+This directory contains examples for using the private apk repository to customize Chainguard images.  This example covers three scenarios:
 1. Setting up a docker file to use the private APK repo and adding packages using the dev image. 
 2. Setting up a docker file to use the private APK repo adding packages, and creating a distroless image using the chroot method.
 3. Creating a pull token for a long lived credential (used for apk repo mirroring or proxy cache).
@@ -69,9 +69,9 @@ grype my-custom-image
 
 ## Using Private APK Repo to create a Distroless Custom Image
 
-1. cd to the private-apk-repo directory
+1. cd to the private-apk-repo/distroless directory
 ```
-cd private-apk-repo
+cd private-apk-repo/distroless
 ```
 
 2. Set ORG variable:
@@ -96,7 +96,6 @@ docker build  \
     --build-arg IMAGE=python \
     --build-arg APK_LIST="curl" \
     --secret id=cgr-token,env=CGR_APK_TOKEN \
-    -f Dockerfile-distroless \
     -t my-custom-image-distroless:latest .
 ```
 

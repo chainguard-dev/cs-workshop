@@ -34,3 +34,25 @@ chainctl auth login
 chainctl auth configure-docker
 ```
 
+## Demo
+
+1. Start a local registry.
+
+```
+docker run -d -p 5000:5000 --rm --name registry distribution/distribution:latest
+```
+
+2. Run the script to copy images to the registry.
+
+```
+export ORG_NAME=your.org
+export IMAGE_NAME=busybox
+
+./image-mirror.sh cgr.dev/${ORG_NAME}/${IMAGE_NAME} localhost:5000/${IMAGE_NAME}
+```
+
+3. List tags in the registry.
+
+```
+crane ls localhost:5000/${IMAGE_NAME}
+```

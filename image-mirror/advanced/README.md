@@ -47,3 +47,15 @@ docker login -u username -p password example.registry
 chainctl auth login
 chainctl auth configure-docker
 ```
+
+## Demo
+
+Run `demo.sh` to demonstrate the script working against a local registry.
+
+Provide your organization name and a repository to copy as arguments. Use a
+small image with a single version stream like `busybox` so that you don't have
+too much to copy.
+
+```
+./demo.sh your.org busybox
+```

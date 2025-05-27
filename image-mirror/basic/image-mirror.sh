@@ -48,6 +48,14 @@ image_list=$(
     | jq -r --arg src_repo "${src_repo}" '.[].tags[] | $src_repo + ":" + .name + "@" + .digest'
 )
 
+
+# If there haven't been any updates in the last 72 hours then the list will be
+# empty.
+if [[ -z "${image_list}" ]]; then
+  echo "No recently updated images found. Exiting." >&2
+  exit 0
+fi
+
 # Iterate over each image
 while read -r src; do
     tag=$(t=${src#*:}; echo ${t%@*})

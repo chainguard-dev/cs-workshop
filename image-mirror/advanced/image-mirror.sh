@@ -64,6 +64,13 @@ function main() {
       | jq -c '.[].tags | group_by(.digest) | .[] | { digest: .[0].digest, tags: map(.name) }'
   )
 
+  # If there haven't been any updates in the last 72 hours then the list will be
+  # empty.
+  if [[ -z "${image_list}" ]]; then
+    echo "No recently updated images found. Exiting." >&2
+    return 0
+  fi
+
   # Iterate over each image in the list.
   while read -r img; do
     digest=$(jq -r .digest <<<"${img}")

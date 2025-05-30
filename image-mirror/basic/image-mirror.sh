@@ -36,6 +36,10 @@ if [[ -n "${missing_cmds}" ]]; then
   exit 1
 fi
 
+# Images will be signed by either the CATALOG_SYNCER or APKO_BUILDER identity in your organization.
+catalog_syncer=$(chainctl iam account-associations describe "${org_name}" -o json | jq -r '.[].chainguard.service_bindings.CATALOG_SYNCER')
+apko_builder=$(chainctl iam account-associations describe "${org_name}" -o json | jq -r '.[].chainguard.service_bindings.APKO_BUILDER')
+
 # List every tag that has been updated in the last 72h. 
 #
 # This produces a list of images in the form <repo>:<tag>@<digest>.
@@ -64,8 +68,8 @@ while read -r src; do
     # Verify the signature before we copy it
     echo "Verifying signature for ${src}..."
     cosign verify \
-      --certificate-oidc-issuer=https://token.actions.githubusercontent.com \
-      --certificate-identity=https://github.com/chainguard-images/images-private/.github/workflows/release.yaml@refs/heads/main \
+      --certificate-oidc-issuer=https://issuer.enforce.dev \
+      --certificate-identity-regexp="^https://issuer.enforce.dev/(${catalog_syncer}|${apko_builder})$" \
       "${src}" &>/dev/null
 
     # You could use `cosign copy` here if you wanted to also copy the

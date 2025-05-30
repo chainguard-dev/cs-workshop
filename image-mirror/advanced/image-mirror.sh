@@ -44,6 +44,10 @@ tmpdir=$(mktemp -d)
 trap 'rm -rf -- "$tmpdir"' EXIT
 
 function main() {
+  # Images will be signed by either the CATALOG_SYNCER or APKO_BUILDER identity in your organization.
+  catalog_syncer=$(chainctl iam account-associations describe "${org_name}" -o json | jq -r '.[].chainguard.service_bindings.CATALOG_SYNCER')
+  apko_builder=$(chainctl iam account-associations describe "${org_name}" -o json | jq -r '.[].chainguard.service_bindings.APKO_BUILDER')
+
   # List every tag that has been updated in the last 72h, aggregate by digest into
   # a structure like:
   #
@@ -87,8 +91,8 @@ function main() {
     # Verify the signature before we copy the image
     echo "Verifying signature for ${digest}..."
     cosign verify \
-      --certificate-oidc-issuer=https://token.actions.githubusercontent.com \
-      --certificate-identity=https://github.com/chainguard-images/images-private/.github/workflows/release.yaml@refs/heads/main \
+      --certificate-oidc-issuer=https://issuer.enforce.dev \
+      --certificate-identity-regexp="^https://issuer.enforce.dev/(${catalog_syncer}|${apko_builder})$" \
       "${src}" &>/dev/null
 
     # Perform the copy
@@ -114,7 +118,7 @@ function should_copy() {
     # If the the destination tag doesn't exist at all, then we should copy the
     # image and we can stop here.
     if [[ -z "${dst_digest}" ]]; then
-      echo "${dst_repo}:${tag} doesn't exist" >&2
+      echo "${dst_repo}:${tag} doesn't exist in the destination" >&2
       return 0
     fi
 
@@ -146,6 +150,7 @@ function should_copy() {
 
     # Naturally there's no use in diffing two identical images.
     if [[ "${dst_digest}" == "${digest}" ]]; then
+      echo "${dst_repo}:${dst_tag} is already up to date"
       continue
     fi
 

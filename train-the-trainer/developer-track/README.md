@@ -1,29 +1,16 @@
 # Developer Track
 
-
 ## Python Example 1
 
-Build
-```
-docker build . -t python-example-1
-```
+See the [`README.md`](python-example-1/README.md) for instructions.
 
-Run 
-```
-docker run --rm python-example-1
-```
+## Python Example 2 (Optional)
 
-This will fail when we try to run it because the `mariadb` packages that are installed in the dev stage are not available in the final stage.  This will be fixed in Python Example 2.
+Similar to Python Example 1 but using a compiled version of the main class.
 
 ```
-  File "/app/run.py", line 1, in <module>
-    from MySQLdb import _mysql
-  File "/app/venv/lib/python3.12/site-packages/MySQLdb/__init__.py", line 17, in <module>
-    from . import _mysql
-ImportError: libmariadb.so.3: cannot open shared object file: No such file or directory
+ENTRYPOINT ["python", "__pycache__/main.cpython-312.pyc"]
 ```
-
-## Python Example 2
 
 Build
 ```
@@ -33,24 +20,6 @@ docker build . -t python-example-2
 Run 
 ```
 docker run --rm python-example-2
-```
-
-## Python Example 3 (Optional)
-
-Same code example as Pythonn Example 2 except it uses a complied version of the main class
-
-```
-ENTRYPOINT ["python", "__pycache__/main.cpython-312.pyc"]
-```
-
-Build
-```
-docker build . -t python-example-3
-```
-
-Run 
-```
-docker run --rm python-example-3
 ```
 
 ## Java Example 1

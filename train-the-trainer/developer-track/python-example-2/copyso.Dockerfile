@@ -16,6 +16,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 FROM cgr.dev/chainguard/python:latest
 
+# Copy the required .so from the dev stage into the runtime stage.
+COPY --from=dev /usr/lib/libmariadb.so* /usr/lib/
+
 # Copy virtual environment into the runtime stage.
 WORKDIR /app
 COPY --from=dev /app/venv /app/venv

@@ -13,7 +13,6 @@ RUN dotnet restore -a $TARGETARCH
 COPY --link . .
 RUN dotnet publish -a $TARGETARCH --no-restore -o /app
 
-
 # Runtime stage
 FROM ${IMAGE_REGISTRY}/dotnet/runtime:9.0
 WORKDIR /app

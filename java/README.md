@@ -1,42 +1,14 @@
-## Java Example 1
+# Java Examples
 
-Example of a SpringBoot application with a single stage build using the `maven` image.
+## Linky Migration
 
-Build (from `java-example-1-orig` directory)
-```
-docker build . -t java-example:1
-```
+[`./linky-migration`](./linky-migration)
 
-Run
-```
-docker run -d -p 8081:8080 java-example:1
-```
+An example of migrating a Dockerfile to use Chainguard Containers.
 
-## Java Example 2
+## 3 Step
 
-Example of a SpringBoot application with a multi stage build using the `maven` and `eclipse-temurin` images.
+[`./3step`](./3step)
 
-Build (from `java-example-2-orig-multi` directory)
-```
-docker build . -t java-example:2
-```
-
-Run
-```
-docker run  -d -p 8082:8080 java-example:2
-```
-
-## Java Example 3
-
-Example of a SpringBoot application with a multi stage build using Chainguard `maven` and `jre` images.
-
-Build (from `java-example-3-cg-multi` directory)
-```
-docker build . -t java-example:3
-```
-
-Run
-```
-docker run  -d -p 8082:8080 java-example:3
-```
-
+A more granular example of migrating an existing Dockerfile to Chainguard
+Containers.

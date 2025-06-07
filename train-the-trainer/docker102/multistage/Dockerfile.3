@@ -8,5 +8,6 @@ USER nonroot
 FROM cgr.dev/chainguard/python:latest
 # COPY --from=builder other stuff I built above...
 COPY --from=builder /usr/bin/jq /usr/bin/jq
-COPY --from=builder /usr/lib/libonig.so.5 /usr/lib/libonig.so.5
+COPY --from=builder /usr/lib/libjq.so* /usr/lib/
+COPY --from=builder /usr/lib/libonig.so* /usr/lib/
 ENTRYPOINT ["/usr/bin/jq"]

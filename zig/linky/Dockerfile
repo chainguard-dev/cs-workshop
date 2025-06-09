@@ -1,4 +1,4 @@
-ARG ORG=chainguard-private
+ARG ORG=cs-ttt-demo.dev
 FROM cgr.dev/${ORG}/zig:latest-dev AS builder
 WORKDIR /app
 ADD . .

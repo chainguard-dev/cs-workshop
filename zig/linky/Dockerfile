@@ -1,4 +1,5 @@
-FROM cgr.dev/badlyenginee.red/zig:latest-dev AS builder
+ARG ORG=chainguard-private
+FROM cgr.dev/${ORG}/zig:latest-dev AS builder
 WORKDIR /app
 ADD . .
 RUN apk add --no-cache bash

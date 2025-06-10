@@ -4,7 +4,7 @@
   - [Pre-requisites](#pre-requisites)
   - [Examples](#examples)
     - [Example - Using Custom Assembly with the Chainguard Console](#example---using-custom-assembly-with-the-chainguard-console)
-  - [Example Using Custom Assembly With Chainctl - Dockerfile Conversion Example](#example-using-custom-assembly-with-chainctl---dockerfile-conversion-example)
+    - [Example - Using Custom Assembly With chainctl - Dockerfile Conversion](#example---using-custom-assembly-with-chainctl---dockerfile-conversion)
   - [Using Custom Assembly with the API](#using-custom-assembly-with-the-api)
 
 ## Overview
@@ -85,7 +85,7 @@ This is meant to be a straightforward example of CA using the console.
 
     Remove the package that was added, to clean up.
 
-## Example Using Custom Assembly With Chainctl - Dockerfile Conversion Example
+### Example - Using Custom Assembly With chainctl - Dockerfile Conversion
 
 In this example we will walk through converting a Dockerfile which is currently using `apk add` to add dependencies to using Custom Assembly built images. The demo is a simple Python app that uses the mariadb database connection driver. This python app requires additional dependencies to be installed on to the Chainguard python base image.
 

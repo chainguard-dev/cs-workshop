@@ -1,0 +1,20 @@
+FROM cgr.dev/cs-ttt-demo.dev/custom-python-chainctl-demo-dev:latest-dev AS dev
+
+# Install python packages into a virtual environment so they can be easily
+# copied into the runtime stage.
+WORKDIR /app
+RUN python -m venv venv
+ENV PATH="/app/venv/bin":$PATH
+COPY requirements.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Runtime image
+FROM cgr.dev/cs-ttt-demo.dev/custom-python-chainctl-demo-runtime:latest
+
+# # Copy virtual environment into the runtime stage.
+WORKDIR /app
+COPY --from=dev /app/venv /app/venv
+ENV PATH="/app/venv/bin":$PATH
+
+COPY run.py run.py
+ENTRYPOINT ["python", "run.py"]

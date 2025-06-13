@@ -57,6 +57,14 @@ docker run --rm python-example-3
 
 Run through [this example](../../java/3step).
 
+## Entrypoint Demo
+
+Run through [this demo](./entrypoint).
+
+## Health Checks Demo
+
+Run through [this demo](./healthchecks).
+
 ## CLI Demo
 
 ### Demo script to showcase the following CLI commands

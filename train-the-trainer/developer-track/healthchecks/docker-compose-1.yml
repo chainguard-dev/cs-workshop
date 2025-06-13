@@ -1,0 +1,11 @@
+services:
+  nginx-example-1:
+    image: cgr.dev/chainguard/nginx
+    ports:
+      - "8081:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s

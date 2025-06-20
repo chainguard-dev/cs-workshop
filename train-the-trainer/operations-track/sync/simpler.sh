@@ -1,9 +1,10 @@
 #!/bin/bash
 
-UPSTREAM_REGISTRY="cgr.dev/cs-ttt-demo.dev/"
+ORG="cs-ttt-demo.dev"
+UPSTREAM_REGISTRY="cgr.dev/${ORG}/"
 DOWNSTREAM_REGISTRY="localhost:80/library/"
 
-requirements=(cosign)
+requirements=(cosign chainctl jq)
 for requirement in "${requirements[@]}"; do
     if ! command -v $requirement &> /dev/null
     then
@@ -12,17 +13,21 @@ for requirement in "${requirements[@]}"; do
     fi
 done
 
+# Images will be signed by either the CATALOG_SYNCER or APKO_BUILDER identity in your organization.
+CATALOG_SYNCER=$(chainctl iam account-associations describe $ORG -o json | jq -r '.[].chainguard.service_bindings.CATALOG_SYNCER')
+APKO_BUILDER=$(chainctl iam account-associations describe $ORG -o json | jq -r '.[].chainguard.service_bindings.APKO_BUILDER')
+
 verify_signature() {
     echo "Verifying attestation for $UPSTREAM_REGISTRY$image"
     cosign verify \
-        --certificate-oidc-issuer=https://token.actions.githubusercontent.com \
-        --certificate-identity=https://github.com/chainguard-images/images-private/.github/workflows/release.yaml@refs/heads/main \
+        --certificate-oidc-issuer=https://issuer.enforce.dev \
+        --certificate-identity-regexp="https://issuer.enforce.dev/(${CATALOG_SYNCER}|${APKO_BUILDER})" \
     $UPSTREAM_REGISTRY/$image -o text
 }
 
 echo "Processing ${#images[@]} images from $IMAGE_LIST"
 
-images=($(crane catalog cgr.dev | grep cs-ttt-demo.dev | cut -f 2 -d '/'))
+images=($(crane catalog cgr.dev | grep $ORG | cut -f 2 -d '/'))
 
 for image in "${images[@]}"; do
     image="$image:latest"

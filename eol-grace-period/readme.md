@@ -22,6 +22,23 @@ This guide utilizes the cs-ttt-demo.dev registry, it is not necessary to use it 
 3. curl installed to use the API.
 4. jq installed to parse API output.
 
+## Demo
+
+An automated demo that walks through the EOL Grace Period API.
+
+It requires that you have access to the `cs-ttt-demo.dev` registry.
+
+You must also have these tools installed:
+
+- `chainctl`
+- `curl`
+- `jq`
+
+Run it like:
+
+```
+$ ./demo.sh
+```
 
 ## Examples
 This section walks through some examples of using EOL Grace Period.

@@ -2,3 +2,6 @@
 .DS_Store
 zig/linky/.zig-cache/*
 zig/linky/zig-out/*
+misc/roles/*.mp4
+misc/roles/*.gif
+misc/roles/*.webm

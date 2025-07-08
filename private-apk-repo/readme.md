@@ -144,7 +144,7 @@ chainctl iam role-bindings create \
 
 ```
 export PULL_RB=$(chainctl iam role-bindings list \
-  --parent ${CHAINGUARD_ORG} \
+  --parent ${ORG} \
   -o json \
   | jq -r --arg identity ${IDENTITY} \
     '

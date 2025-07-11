@@ -18,7 +18,7 @@ Set $ORGANIZATION to be the organization name you're pulling Helm Charts from.  
 ```bash
 To use this pull token in another environment, run this command:
 
-    docker login "cgr.dev" --username "bd3c9ec494caca60225319fd4053abe067c169ec/5037f83cdd0fbdcd" --password "eyJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJodHRwczovL2lzc3Vlci5lbmZvcmNlLmRldiIsImV4cCI6MTc1NDgzNzMzOSwiaWF0IjoxNzUyMjQ1MzQwLCJpc3MiOiJodHRwczovL3B1bGx0b2tlbi5pc3N1ZXIuY2hhaW5ndWFyZC5kZXYiLCJzdWIiOiJwdWxsLXRva2VuLWY2NzliOTc0NmUyMTNkM2MzNmY0MjMwYzA3MjkxOWY5NTU2ODllNmUifQ.U9qq3I7XHkzwqLcnc9wUlWFlyOKmgAHJK0LcYaTO7H949l7ccrAPDmErd37lf57btJClB4AMuL9p3RX-Lh2Jtz--pa3ivHc0R6vQcXOCZHukiSvvG0_AOq0_5DxyV9bLyRxHKODY_B9nG-AATM2HYdVUPGFOOdthVzzpuc3BImQWXxJ4riNPopsoFRlBEAoHzsx3SBbJlEodJ0E6RMBrZS14JjoTMvegLyvqOa5eCUOYKff_Sq7-ZzyOcn7XmXM11YvRdGnDorjwPRmZT8SOrZ4Ao0Lm3DcFkLPJSxBrI8Qg5LXJ6ikQ8pqybC_6UcBy_zcFlu3Gz9btTZrcLW9x56qDmaJADICGPj9CqKJpULDl3VRnK-GotWGWKcXvYzeAUCAzjQEBF1thBgUP3iO-pwGEs_eJ7e3-uICckCQGFuq62IYcoGwWrjEyvDhSaYiK7l6YFDnbXs_nya0kvC-9u1h2N7EGTZuYtpmGrMceWZeljnI_3qQJ8yGFv6BAGAO1d4zq83N0ctRNoKGY2HJXhXEKGd1_gxpXRRAocChzeLNlrmgz5n7CgJo0UgAdZlZTPXJApcefiXQfGOe8tzgzYBDUKZ8PbU9-LYlHumoH-PoS7N6vRXPI4iZj_3a3-3iD4WYz2KNdN90ycIns6HY-SQUL7MBqeo1CB0w-8h6RTLY"
+    docker login "cgr.dev" --username "bd3c9ec494caca60225319fd4053abe067c169ec/5037f83cdd0fbdcd" --password "eyJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJodHRwczovL2lzc..." # Token truncated
 ```
 
 Set these values in the console.  Note that the URL should be `https://cgr.dev`

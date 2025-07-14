@@ -1,0 +1,11 @@
+FROM cgr.dev/chainguard/python:latest-dev AS build
+# Do stuff
+
+USER root
+COPY --from=cgr.dev/chainguard/python:latest / /base-chroot
+RUN echo 'print("hello")' > /base-chroot/hello.py
+
+FROM cgr.dev/chainguard/python:latest
+COPY --link --from=build /base-chroot /
+
+CMD ["/hello.py"]

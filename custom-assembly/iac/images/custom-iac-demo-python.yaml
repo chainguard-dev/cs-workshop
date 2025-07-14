@@ -1,0 +1,4 @@
+contents:
+  packages:
+    - mariadb-connector-c
+    - mariadb-connector-c-dev

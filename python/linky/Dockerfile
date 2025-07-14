@@ -13,7 +13,6 @@ COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-ARG IMAGE_REGISTRY="cgr.dev/chainguard"
 FROM ${IMAGE_REGISTRY}/python:latest
 
 WORKDIR /linky

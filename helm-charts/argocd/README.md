@@ -130,6 +130,10 @@ Charts have been packaged as ArgoCD applications easing in the deployment. To de
 ```bash
 kubectl apply -f apps/<app-name>.yaml
 ```
+
+You can then view ArgoCD to confirm application has properly rolled out
+
+![argo app sync](img/app-rollout.png)
 <!-- 
 # Dynamic AuthN using ArgoCD Config Plugin
 

@@ -1,0 +1,24 @@
+global:
+  image:
+    repository: cgr.dev/ky-rafaels.example.com/argocd
+    tag: 2.14.3
+  # -- Secrets with credentials to pull images from a private registry
+  # imagePullSecrets:
+  #   - "regcred"
+repoServer:
+  image:
+    repository: cgr.dev/ky-rafaels.example.com/argocd-repo-server
+    tag: 2.14.3
+dex:
+  image:
+    repository: cgr.dev/ky-rafaels.example.com/dex
+    tag: 2.42
+redis:
+  image:
+    repository: cgr.dev/ky-rafaels.example.com/redis
+    tag: 7.2.7
+server:
+  extraArgs:
+  - --insecure
+crds:
+  install: true

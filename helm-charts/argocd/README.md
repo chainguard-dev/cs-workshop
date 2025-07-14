@@ -128,7 +128,7 @@ argocd repo add oci://cgr.dev/ky-rafaels.example.com/iamguarded-charts \
 
 Charts have been packaged as ArgoCD applications easing in the deployment. To deploy a chart:
 ```bash
-kubectl apply -f apps/<app-name>.yaml
+kubectl apply -f apps/redis-cluster.yaml
 ```
 
 You can then view ArgoCD to confirm application has properly rolled out

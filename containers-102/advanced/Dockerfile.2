@@ -1,0 +1,5 @@
+FROM cgr.dev/chainguard/python:latest-dev
+USER root
+RUN apk --no-cache add jq
+RUN apk del bash busybox wget git apk-tools
+USER 65532

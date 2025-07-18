@@ -1,0 +1,8 @@
+contents:
+  packages:
+    - jq
+    - yq 
+    - helm 
+    - bash-binsh
+    - crane
+    - chainctl  # not yet available in my repo

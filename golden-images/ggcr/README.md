@@ -10,7 +10,7 @@ Examples of using the `google/go-containerregistry` module to mutate images.
 1. Start a local container registry.
 
 ```
-docker run -d -p 5005:5005 --rm --name registry distribution/distribution:latest
+docker run -d -p 5000:5000 --rm --name registry distribution/distribution:latest
 ```
 
 2. Build `mutate`.
@@ -27,14 +27,14 @@ go build -o mutate .
    single-architecture image.
 
 ```
-./mutate cgr.dev/your.org/python:latest-dev localhost:5005/python:latest-dev
+./mutate cgr.dev/your.org/python:latest-dev localhost:5000/python:latest-dev
 ```
 
 4. Provide the `-multi-arch` flag to mutate each image in the index and push a
    multi-arch image to the destination.
 
 ```
-./mutate -multi-arch cgr.dev/your.org/python:latest-dev localhost:5005/python:latest-dev
+./mutate -multi-arch cgr.dev/your.org/python:latest-dev localhost:5000/python:latest-dev
 ```
 
 ## Validation
@@ -52,7 +52,7 @@ crane config localhost:5000/python:latest-dev | jq -r .
 Inspect the content of the layers.
 
 ```
-export IMAGE=localhost:5005/python:latest-dev
+export IMAGE=localhost:5000/python:latest-dev
 crane blob ${IMAGE}@$(crane manifest ${IMAGE} | jq -r '.layers[-1].digest') | tar -tv
 crane blob ${IMAGE}@$(crane manifest ${IMAGE} | jq -r '.layers[-2].digest') | tar -tv
 ```

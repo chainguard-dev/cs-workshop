@@ -80,6 +80,20 @@ func mutateImage(img v1.Image) (v1.Image, error) {
 	}
 	img = mutate.Annotations(img, annotations).(v1.Image)
 
+	// Add the same values as labels
+	cfg, err := img.ConfigFile()
+	if err != nil {
+		return nil, fmt.Errorf("fetching image config: %w", err)
+	}
+	cfg = cfg.DeepCopy()
+	for k, v := range annotations {
+		cfg.Config.Labels[k] = v
+	}
+	img, err = mutate.ConfigFile(img, cfg)
+	if err != nil {
+		return nil, fmt.Errorf("mutating image config: %w", err)
+	}
+
 	// Extract certificates from the image and append our caCert
 	var caCertBundle []byte
 	extracted := mutate.Extract(img)

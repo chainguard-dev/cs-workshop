@@ -2,9 +2,6 @@
 
 An example of using `crane mutate` to modify Chainguard Containers.
 
-It lists all the recently updated images in a Chainguard repository, applies
-some global configuration to them and pushes them to another registry.
-
 ## Requirements
 
 - [`chainctl`](https://edu.chainguard.dev/chainguard/chainctl-usage/how-to-install-chainctl/)
@@ -16,45 +13,49 @@ some global configuration to them and pushes them to another registry.
 1. Start a local container registry.
 
 ```
-docker run -d -p 5005:5005 --rm --name registry distribution/distribution:latest
+docker run -d -p 5000:5000 --rm --name registry distribution/distribution:latest
 ```
 
-2. Run `run.sh` with your organization name, the repository you want to ingest and
-   the address of your target registry.
+2. Run `mutate.sh` with an image in your organization as the first argument and
+   a tag in the destination registry as the second.
 
    By default the script targets the `linux/amd64` platform. You can change
    this with the `PLATFORM` environment variable.
 
 ```
 export PLATFORM=linux/arm64
-./run.sh your.org python localhost:5005
+./mutate.sh cgr.dev/your.org/python:latest-dev localhost:5000/python:latest-dev
 ```
 
 ## Validate
 
-Inspect the annotations and labels on one of your modified images.
+Export the image reference for use in subsequent commands.
 
 ```
-crane manifest localhost:5000/python | jq -r .
+export IMAGE=localhost:5000/python:latest-dev
+```
+
+Inspect the annotations and labels on your modified image.
+
+```
+crane manifest ${IMAGE} | jq -r .
 ```
 
 ```
-crane config localhost:5000/python | jq -r .
+crane config ${IMAGE} | jq -r .
 ```
 
-Inspect the content of the layers.
+Inspect the content of the additional layer.
 
 ```
-export IMAGE=localhost:5005/python
 crane blob ${IMAGE}@$(crane manifest ${IMAGE} | jq -r '.layers[-1].digest') | tar -tv
-crane blob ${IMAGE}@$(crane manifest ${IMAGE} | jq -r '.layers[-2].digest') | tar -tv
 ```
 
-Run one of your modified `-dev` images and verify that the changes have been
+Run the image and check that the changes have been
 applied.
 
 ```
-docker run -it --rm --entrypoint bash -u root --pull always localhost:5000/python:latest-dev
+docker run -it --rm --entrypoint bash -u root --pull always ${IMAGE}
 ```
 
 Check that the APK repositories have been configured. Ensure that the keys exist.

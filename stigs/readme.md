@@ -76,6 +76,6 @@ The demo.sh script can be used to run the above demo, if you have demo magic ins
 ## Running STIG Scans in a GitHub Action
 In some cases you may want to run a STIG scan on your own images in a CI/CD pipeline, the example builds an image from a Dockerfile located in the repo and then runs a STIG scan on it, and posts the results as an artifact for later viewing.  If the scan fails it will stop the pipeline and not push the built image to the GHCR.
 
-More details can be found in the [stig-githhub-action-example](stig-github-action-example/readme.md) directory.
+More details can be found in the [stig-githhub-action-example](stig-github-action-example/README.md) directory.
 
 

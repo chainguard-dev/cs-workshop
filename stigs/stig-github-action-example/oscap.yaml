@@ -1,0 +1,67 @@
+name: STIG Scan
+on:
+  workflow_dispatch:
+
+jobs:
+  stig-scan:
+    name: OSCAP STIG Scan
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write # to push the updates
+      pull-requests: write # to open Pull requests
+      id-token: write # used to sign the commits using gitsign
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - uses: chainguard-dev/setup-chainctl@main
+        with:
+          identity: "<ASSUMABLE IDENITY ID CREATED IN STEP 1.>"   
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.9.0
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3.3.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}        
+      - name: Build Image
+        uses: docker/build-push-action@v6.18.0
+        id: build-and-push
+        with:
+          platforms: linux/amd64
+          push: false
+          load: true
+          tags: stig-scan-example:latest-temp
+          build-args: |
+            CHAINGUARD_ORG=<YOUR CHAINGUARD ORG>               
+      - name: Run STIG Scan
+        run: |
+          # run the target image
+          docker run --name target -d stig-scan-example:latest-temp tail -f /dev/null
+          docker run --privileged -i --rm -u 0:0 --pid=host \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v $(pwd)/out:/out \
+            --entrypoint sh \
+            cgr.dev/chainguard/openscap:latest-dev <<_END_DOCKER_RUN
+          oscap-docker container target xccdf eval \
+            --profile "xccdf_basic_profile_.check" \
+            --report /out/report.html \
+            --results /out/results.xml \
+            /usr/share/xml/scap/ssg/content/ssg-chainguard-gpos-ds.xml
+          _END_DOCKER_RUN
+          echo "Exit code: $?"
+      - name: Rebuild and Push (after scan passes)
+        uses: docker/build-push-action@v6.18.0
+        with:
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ghcr.io/<YOUR GHCR REGISTRY>/stig-example/stig-scan-example:latest
+          build-args: |
+            CHAINGUARD_ORG=<YOUR GITHUB CHAINGUARD ORG>           
+      - name: Upload Scan Results
+        uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: stig-scan-results
+          path: ./out/

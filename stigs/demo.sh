@@ -1,7 +1,7 @@
 #! env bash
 . ../base.sh
 
-ORG="jbishay.com"
+ORG="<CHAINGUARD ORG>"
 
 # Ensure IMAGE is set to a FIPS image in the ORG's registry
 IMAGE="python-fips"

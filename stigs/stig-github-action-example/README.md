@@ -7,6 +7,8 @@
 ## Overview
 This example shows how to perform a STIG scan of a Chainguard image.  This is based on the publicly available documentation that can be found [here](https://edu.chainguard.dev/chainguard/chainguard-images/features/image-stigs/).
 
+This documents how to setup the GitHub action, a working version of the GitHub action can be found [here](https://github.com/jasonbishay/cg-stig-scan/actions/workflows/oscap.yaml)
+
 **Note:** Only FIPS images will pass the STIG scan.
 
 This action performs the following steps:

@@ -121,7 +121,7 @@ trivy image python-poetry-cgr:latest
 docker scout cves python-poetry-cgr:latest
 ```
 
-### 7. Use Custom Assembly (CA) to Reduce Build Complexity [WIP]
+### 6. Use Custom Assembly (CA) to Reduce Build Complexity [WIP]
 
 - Blog: [Announcing Chainguard Custom Assembly: Image Customization Without Complexity](https://www.chainguard.dev/unchained/announcing-chainguard-custom-assembly-image-customization-without-complexity)
 - Blog: [Custom Assembly and Private APK Repositories are Now Generally Available](https://www.chainguard.dev/unchained/custom-assembly-and-private-apk-repositories-now-generally-available)

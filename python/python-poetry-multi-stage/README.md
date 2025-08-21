@@ -85,7 +85,7 @@ docker scout cves python-poetry-ubi:latest
 
 Holy #$@! We're never going to have any time to develop code if we're stuck justifying vulnerabilities! There has to be a better way?!
 
-### 5. Minimize Your Attack Surface Using Zero-CVE Images [WIP]
+### 5. Minimize Your Attack Surface Using Zero-CVE Images
 
 👋 Chainguard here! We're here to tell you there is a better way! In fact, we've written many blog posts and a whole [tutorial](https://edu.chainguard.dev/chainguard/chainguard-images/getting-started/python/) about it.
 
@@ -102,13 +102,13 @@ Take a look at `Dockerfile.multi-stage` to see how this is achieved:
 The final step can be executed like so:
 
 ```sh
-dfc --org="example.com" ./Dockerfile > ./answers/Dockerfile.chainguard
+dfc --org="chainlabs-roadshows" ./Dockerfile > ./Dockerfile.chainguard
 ```
 
 Check out how the results for yourself, and see how much smaller the image and its attack surface are!
 
 ```sh
-docker run --privileged ghcr.io/chps-dev/chps-scorer:latest cgr.dev/example.com/python:3.11
+docker run --privileged ghcr.io/chps-dev/chps-scorer:latest cgr.dev/chainlabs-roadshows/python:3.11
 
 docker build -t python-poetry-cgr:latest -f ./answers/Dockerfile.chainguard .
 docker run --rm --name poetry -p 8000:8000 python-poetry-cgr:latest
@@ -122,10 +122,17 @@ docker scout cves python-poetry-cgr:latest
 
 ### 7. Use Custom Assembly (CA) to Reduce Build Complexity [WIP]
 
-How to:
+- Blog: [Announcing Chainguard Custom Assembly: Image Customization Without Complexity](https://www.chainguard.dev/unchained/announcing-chainguard-custom-assembly-image-customization-without-complexity)
+- Blog: [Custom Assembly and Private APK Repositories are Now Generally Available](https://www.chainguard.dev/unchained/custom-assembly-and-private-apk-repositories-now-generally-available)
+- Docs: [Custom Assembly Overview](https://edu.chainguard.dev/chainguard/chainguard-images/features/ca-docs/custom-assembly/)
+
+- [ ] _How to include packages like shadow and curl automatically:_
+
 - Customizations Without Build Complexity
 - Automation without Manual Workflows
 - CVE SLA at the Package Level
+    - 7 days Critical
+    - 14 days High/Medium/Low
 - Preservation of End-to-End Integrity
 
 ## Next Steps: Secure Your Application Dependencies

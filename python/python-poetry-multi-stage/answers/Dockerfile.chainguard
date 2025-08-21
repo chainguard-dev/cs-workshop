@@ -1,4 +1,4 @@
-FROM cgr.dev/chainguard-private/python:3.11-dev AS builder
+FROM cgr.dev/chainlabs-roadshows/python:3.11-dev AS builder
 
 USER root
 
@@ -30,7 +30,7 @@ RUN apk update && \
     poetry config --unset http-basic.github-mlutils && \
     chown -R 65532:65532 . .
 
-FROM cgr.dev/chainguard-private/python:3.11
+FROM cgr.dev/chainlabs-roadshows/python:3.11
 
 ENV PATH="/opt/venv/usr/bin:$PATH"
 

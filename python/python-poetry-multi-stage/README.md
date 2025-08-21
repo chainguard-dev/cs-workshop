@@ -6,7 +6,7 @@ Welcome to the ChainLabs Roadshow Workshop! In this workshop, you'll get hands-o
 - Customize secure images while preserving end-to-end integrity for open source software (OSS)
 - Leverage Chainguard’s CVE remediation SLA to maintain security over time
 
-This example uses a multi-stage image build for a 'Hello World' Python image leveraging poetry, but there are many more Migration Guides available at [https://edu.chainguard.dev/chainguard/migration/](https://edu.chainguard.dev/chainguard/migration/).
+This example uses a multi-stage image build for a 'Hello World' Python application leveraging poetry, but there are many more Migration Guides available at [https://edu.chainguard.dev/chainguard/migration/](https://edu.chainguard.dev/chainguard/migration/).
 
 **If you need assistance with any steps in the workshop, please raise your hand and a Chainguard Engineer will come by to assist you.**
 
@@ -105,18 +105,19 @@ The final step can be executed like so:
 dfc --org="chainlabs-roadshows" ./Dockerfile > ./Dockerfile.chainguard
 ```
 
-Check out how the results for yourself, and see how much smaller the image and its attack surface are!
+Check out the results for yourself, and see how much smaller the image and its attack surface are!
 
 ```sh
+# Benchmark
 docker run --privileged ghcr.io/chps-dev/chps-scorer:latest cgr.dev/chainlabs-roadshows/python:3.11
 
+# Build & Test
 docker build -t python-poetry-cgr:latest -f ./answers/Dockerfile.chainguard .
 docker run --rm --name poetry -p 8000:8000 python-poetry-cgr:latest
 
+# Scan
 grype python-poetry-cgr:latest
-# and/or
 trivy image python-poetry-cgr:latest
-# and/or
 docker scout cves python-poetry-cgr:latest
 ```
 

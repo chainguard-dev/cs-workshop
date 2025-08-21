@@ -16,7 +16,7 @@ COPY ./app poetry.lock pyproject.toml ./
 
 RUN apt-get update && \
     apt-get install -y libvshadow-utils && \
-    python3.10 -m venv /opt/venv && \
+    python3.11 -m venv /opt/venv && \
     pip3 install --upgrade pip && \
     pip3 install poetry==1.7.1 && \
     pip3 install urllib3==1.26.18 && \

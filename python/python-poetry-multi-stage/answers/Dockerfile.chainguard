@@ -1,4 +1,4 @@
-FROM cgr.dev/chainguard-private/python:3.10-dev AS builder
+FROM cgr.dev/chainguard-private/python:3.11-dev AS builder
 
 USER root
 
@@ -18,7 +18,7 @@ COPY ./app poetry.lock pyproject.toml ./
 
 RUN apk update && \
     apk add --no-cache shadow && \
-    python3.10 -m venv /opt/venv && \
+    python3.11 -m venv /opt/venv && \
     pip3 install --upgrade pip && \
     pip3 install poetry==1.7.1 && \
     pip3 install urllib3==1.26.18 && \
@@ -30,7 +30,7 @@ RUN apk update && \
     poetry config --unset http-basic.github-mlutils && \
     chown -R 65532:65532 . .
 
-FROM cgr.dev/chainguard-private/python:3.10
+FROM cgr.dev/chainguard-private/python:3.11
 
 ENV PATH="/opt/venv/usr/bin:$PATH"
 
@@ -39,7 +39,9 @@ WORKDIR /app
 COPY --from=builder /opt/venv /opt/venv
 COPY --from=builder /app/ .
 COPY --from=builder /usr/bin/ /usr/bin
-COPY --from=builder /usr/lib/python3.10/site-packages /usr/lib/python3.10/site-packages
+COPY --from=builder /usr/lib/python3.11/site-packages /usr/lib/python3.11/site-packages
+
+USER 65532
 
 EXPOSE 8000
 

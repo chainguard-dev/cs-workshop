@@ -1,5 +1,6 @@
 FROM registry.access.redhat.com/ubi9/python-311:latest
 
+# 1) Unlike the Debian-based image, the UBI-based image starts as a non-root user. In order to execute our RUN commands, we'll need to switch back to a privileged user
 USER root
 
 ENV PYTHONUNBUFFERED=1 \
@@ -16,6 +17,8 @@ WORKDIR /app
 
 COPY ./app poetry.lock pyproject.toml ./
 
+# 2) UBI-based images use the dnf package manager instead of apt
+# 3) The libvshadow-utils package does not exist in the UBI ecoystem. Instead, the shadow-utils package exists
 RUN dnf update -y && \
     dnf install -y shadow-utils && \
     python3.11 -m venv /opt/venv && \
@@ -28,6 +31,9 @@ RUN dnf update -y && \
     poetry config --local virtualenvs.create true && \
     poetry config --local virtualenvs.in-project true && \
     poetry config --unset http-basic.github-mlutils
+
+# BONUS) Switch back to the non-root user before starting the application
+USER 1001
 
 EXPOSE 8000
 

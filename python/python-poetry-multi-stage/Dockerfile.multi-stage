@@ -1,5 +1,5 @@
 # 1) Add builder stage
-FROM python:3.10 AS builder
+FROM python:3.11 AS builder
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -18,7 +18,7 @@ COPY ./app poetry.lock pyproject.toml ./
 # 2) Create virtual environment
 RUN apt-get update && \
     apt-get install -y libvshadow-utils && \
-    python3.10 -m venv /opt/venv && \
+    python3.11 -m venv /opt/venv && \
     pip3 install --upgrade pip && \
     pip3 install poetry==1.7.1 && \
     pip3 install urllib3==1.26.18 && \
@@ -31,7 +31,7 @@ RUN apt-get update && \
     chown -R 65532:65532 . .
 
 # 3) Add final stage
-FROM python:3.10
+FROM python:3.11
 
 ENV PATH="/opt/venv/usr/bin:$PATH"
 
@@ -41,7 +41,9 @@ WORKDIR /app
 COPY --from=builder /opt/venv /opt/venv
 COPY --from=builder /app/ .
 COPY --from=builder /usr/bin/ /usr/bin
-COPY --from=builder /usr/lib/python3.10/site-packages /usr/lib/python3.10/site-packages
+COPY --from=builder /usr/lib/python3.11/site-packages /usr/lib/python3.11/site-packages
+
+USER 65532
 
 EXPOSE 8000
 

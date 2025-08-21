@@ -1,9 +1,9 @@
 # ChainLabs Roadshow Workshop
 
-Welcome to the ChainLabs Roadshow Workshop Repo! In this README, you'll get hands-on experience migrating applications from traditional open source base images to Chainguard’s secure, near-zero CVE images. In this workshop, you’ll learn how to:
+Welcome to the ChainLabs Roadshow Workshop! In this workshop, you'll get hands-on experience migrating applications from traditional open source base images to Chainguard’s secure, near-zero CVE images. You’ll learn how to:
 
 - Migrate applications without adding package managers, installing development tools, or building new pipelines
-- Customize secure images while preserving end-to-end integrity for open source software
+- Customize secure images while preserving end-to-end integrity for open source software (OSS)
 - Leverage Chainguard’s CVE remediation SLA to maintain security over time
 
 This example uses a multi-stage image build for a 'Hello World' Python image leveraging poetry, but there are many more Migration Guides available at [https://edu.chainguard.dev/chainguard/migration/](https://edu.chainguard.dev/chainguard/migration/).
@@ -16,78 +16,126 @@ This example uses a multi-stage image build for a 'Hello World' Python image lev
 - Grype, Trivy, and/or Docker Scout
 - Access to the Chainguard Private Registry
 
-### 0. Setup [WIP]
+### Setup
+
+To get started, clone this repo and change into the current directory!
 
 ```sh
 git clone https://github.com/chainguard-dev/cs-workshop.git
 cd cs-workshop/python/python-poetry-multi-stage
 ```
 
-### 1a. Benchmark Your Base Image [WIP]
+### 1. Benchmark Your Base Image
 
-- Container Hardening Priorities (CHPs) Scorer: [https://github.com/chps-dev/chps-scorer](https://github.com/chps-dev/chps-scorer)
-- [ ] _Scanners will yield different results, so it's important to choose wisely in order to combat false negatives and false positives_
+When building an application on OSS, it's extremely important to choose a secure foundation which minimizes risk and prevents future toil for your organization.
 
-```sh
-docker inspect python:3.10
-
-docker scout cves python:3.10
-trivy image python:3.10
-grype python:3.10
-
-docker run --privileged ghcr.io/chps-dev/chps-scorer:latest python:3.10
-```
-
-### 1b. Build & Test Your Application [WIP]
+As indicated in `Dockerfile.deb`, our application currently depends on **Python 3.11**, so let's start by using an open source image scorer, [CHPs](https://github.com/chps-dev/chps-scorer), to better understand our foundation.
 
 ```sh
-docker build -t python-poetry-deb:latest -f Dockerfile.deb
-docker run --rm --name poetry -p 8000:8000 python-poetry-deb:latest
-
-# INFO:     Started server process [1]
-# INFO:     Waiting for application startup.
-# INFO:     Application startup complete.
-# INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+docker run --privileged ghcr.io/chps-dev/chps-scorer:latest python:3.11
 ```
 
-You should see the hello world page now at http://0.0.0.0:8000
+Yikes! Our base image scored well on Provenance, but terrible on Minimalism, Configuration, and CVEs. It would really suck to POA&M all these `deb` package vulnerabilities. Maybe we should convince leadership to try a different base image...
 
-### 1c. Evaluate Your Application's Final Attack Surface [WIP]
+### 2. Benchmark Your Base Image (Again)
+
+Great news: our Engineering team was given the green light to use a UBI-based image instead of a Debian-based one! Let's see how this one looks.
 
 ```sh
-docker scout cves python-poetry-deb:latest
-trivy image python-poetry-deb:latest
-grype python-poetry-deb:latest
+docker run --privileged ghcr.io/chps-dev/chps-scorer:latest registry.access.redhat.com/ubi9/python-311:latest
 ```
 
-### 2. Migrate Your Application to an Alternate Base Image [WIP]
+Oh boy - the Configuration improved and there are less High severity vulnerabilities, but our image still received a pretty low score for Minimalism and CVEs. 
 
-_Debian -> UBI_
+But container hardening will have to wait... we need to get this application working for our end user ASAP!
 
-1. Size & UID
-2. CVEs
-3. CHPs
-4. Painful Dockerfile updates
+### 3. Build Your Application
 
-### 3. Harden Your Application Using a Multi-Stage Build [WIP]
+Let's point the **FROM** line in our Dockerfile to our new UBI-based image, rename that to `Dockerfile.ubi`, and build our application.
 
-1. Start a new build stage based on the `python:3.10-dev` container image and call it `builder`
+```sh
+docker build -t python-poetry-ubi:latest -f Dockerfile.ubi .
+```
+
+What happened??? Our Debian-based image built fine. How come the UBI-based one failed? 
+
+_See if you can figure out how to successfully build the UBI-based image without peeking in the `answers/` directory_ 🙂 
+
+```sh
+# SOLUTION:
+docker build -t python-poetry-ubi:latest -f ./answers/Dockerfile.ubi-fixed .
+docker run --rm --name poetry -p 8000:8000 python-poetry-ubi:latest
+```
+
+That was painful, but at least we have a working application now. You should now see the hello world page at http://0.0.0.0:8000
+
+### 4. This Shit is Hard!
+
+Our Project Manager just alerted us that the end user needs a copy of the scan results, along with security justifications for any findings. Let's use an open source scanner to see what our future workload looks like 😭
+
+_Note: All scanners will yield different results. It's recommended to use multiple third-party scanners in order to combat false negatives and false positives._
+
+```sh
+grype python-poetry-ubi:latest
+# and/or
+trivy image python-poetry-ubi:latest
+# and/or
+docker scout cves python-poetry-ubi:latest
+```
+
+Holy #$@! We're never going to have any time to develop code if we're stuck justifying vulnerabilities! There has to be a better way?!
+
+### 5. Minimize Your Attack Surface Using Zero-CVE Images [WIP]
+
+👋 Chainguard here! We're here to tell you there is a better way! In fact, we've written many blog posts and a whole [tutorial](https://edu.chainguard.dev/chainguard/chainguard-images/getting-started/python/) about it.
+
+The first step is to implement a **multi-stage build** so that your final image includes the minimum components necessary for your application to run. This will eliminate a lot of unecessary software packages and thus reduce your application's attack surface.
+
+Take a look at `Dockerfile.multi-stage` to see how this is achieved:
+
+1. Start a new build stage based on the original container image and call it `builder`
 2. Create a new virtual environment to cleanly hold the application’s dependencies
-3. Start a new build stage based on the `python:3.10` image
+3. Start a new build stage based on a distroless image
 4. Copy the dependencies in the virtual environment from the builder stage, and the source code from the current directory
+5. Execute [DFC](https://github.com/chainguard-dev/dfc) to automatically convert your Dockerfile to use Zero-CVE Images
 
-### 4. Use Dockerfile Convertor (DFC) to Migrate Your Application to a Secure Base Image [WIP]
+The final step can be executed like so:
 
-_Debian/UBI -> Chainguard_
+```sh
+dfc --org="example.com" ./Dockerfile > ./answers/Dockerfile.chainguard
+```
 
-- Dockerfile Convertor (DFC): [https://github.com/chainguard-dev/dfc](https://github.com/chainguard-dev/dfc)
-- [ ] _Update DFC packages_
-- [ ] _Fix ORG in Dockerfile.chainguard_
+Check out how the results for yourself, and see how much smaller the image and its attack surface are!
 
-### 5. Use Custom Assembly (CA) to Reduce Complexity [WIP]
+```sh
+docker run --privileged ghcr.io/chps-dev/chps-scorer:latest cgr.dev/example.com/python:3.11
 
-To do...
+docker build -t python-poetry-cgr:latest -f ./answers/Dockerfile.chainguard .
+docker run --rm --name poetry -p 8000:8000 python-poetry-cgr:latest
 
-### 6. Eliminate Even-More OSS Supply Chain Risk Using Chainguard Libraries [WIP]
+grype python-poetry-cgr:latest
+# and/or
+trivy image python-poetry-cgr:latest
+# and/or
+docker scout cves python-poetry-cgr:latest
+```
 
-- Chainguard Libraries Overview: [https://edu.chainguard.dev/chainguard/libraries/overview/](https://edu.chainguard.dev/chainguard/libraries/overview/)
+### 7. Use Custom Assembly (CA) to Reduce Build Complexity [WIP]
+
+How to:
+- Customizations Without Build Complexity
+- Automation without Manual Workflows
+- CVE SLA at the Package Level
+- Preservation of End-to-End Integrity
+
+## Next Steps: Secure Your Application Dependencies
+
+There you have it! You have now migrated your first application to leverage minimal, zero-CVE base images that are built from source daily by [Chainguard's Factory](https://www.chainguard.dev/unchained/this-shit-is-hard-inside-the-chainguard-factory).
+
+**Next, you can eliminate even more supply chain risk in your applications by utilizing Chainguard Libraries!**
+
+- Blog: [Announcing Chainguard Libraries for Python: Malware-Resistant Dependencies Built Securely from Source](https://www.chainguard.dev/unchained/announcing-chainguard-libraries-for-python-malware-resistant-dependencies-built-securely-from-source)
+- Blog: [Guarding the Python Ecosystem Against the Growing Number of Severe Malware Attacks](https://www.chainguard.dev/unchained/guarding-the-python-ecosystem-against-the-growing-number-of-severe-malware-attacks)
+- Blog: [Mitigating Malware in the Python Ecosystem with Chainguard Libraries](https://www.chainguard.dev/unchained/mitigating-malware-in-the-python-ecosystem-with-chainguard-libraries)
+- Blog: [Malware-Resistant Python without the Guesswork](https://www.chainguard.dev/unchained/malware-resistant-python-without-the-guesswork)
+- Docs: [Chainguard Libraries Overview](https://edu.chainguard.dev/chainguard/libraries/overview/)

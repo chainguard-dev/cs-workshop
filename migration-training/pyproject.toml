@@ -1,0 +1,44 @@
+[project]
+name = "as-api"
+version = "0.1.0"
+description = "this is a test"
+readme = "README.md"
+requires-python = ">=3.13"
+authors = [
+    { name = "cgr", email = "notarealemail@fake.com" },
+]
+maintainers = [
+    { name = "cgr", email = "notarealemail@fake.com" }
+]
+dependencies = []
+
+[project.urls]
+Homepage = ""
+Documentation = ""
+Repository = ""
+Issues = ""
+
+[dependency-groups]
+dev = [
+    "ruff",
+    "pytest",
+    "pytest-cov",
+    "ty",
+    "twine",
+    "build",
+    "pre-commit",
+    "rich",
+]
+
+[build-system]
+requires = ["uv_build"]
+build-backend = "uv_build"
+
+[project.scripts]
+as_api = "api_module.main:hello_world"
+
+[tool.ruff]
+target-version = "py313"
+
+[tool.coverage.run]
+omit = ["tests/*"]

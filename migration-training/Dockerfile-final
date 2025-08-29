@@ -16,7 +16,7 @@ COPY src /app/src
 
 FROM cgr.dev/garrett.crosby/python:3.13 AS runtime
 ENV UV_LIBC=gnu
-ENV PATH=/app/.venv/bin:$PATH
+ENV PATH=/nonroot/app/.venv/bin:$PATH
 USER nonroot
 WORKDIR /nonroot/app
 COPY --from=build --chown=nonroot /app /nonroot/app

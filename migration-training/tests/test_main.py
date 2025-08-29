@@ -1,4 +1,4 @@
-from as_api.main import hello_world
+from api_module.main import hello_world
 
 
 def test_hello_world():

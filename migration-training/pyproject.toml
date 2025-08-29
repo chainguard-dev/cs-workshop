@@ -1,5 +1,5 @@
 [project]
-name = "as-api"
+name = "api_module"
 version = "0.1.0"
 description = "this is a test"
 readme = "README.md"

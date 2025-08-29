@@ -7,7 +7,7 @@ ENV UV_NO_CACHE=1
 
 WORKDIR /app
 
-RUN apk add --no-cache cmake curl uv
+RUN apk add --no-cache cmake curl
 
 COPY README.md /app/
 COPY pyproject.toml /app/

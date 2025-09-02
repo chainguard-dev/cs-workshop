@@ -12,13 +12,13 @@ banner "Step 2: Exec into that container"
 pe "docker exec -it my-chainguard sh"
 
 banner "Step 3: Start a debug container attached to the target"
-pe "docker run --rm -it --pid container:my-chainguard --network container:my-chainguard busybox"
+pe "docker run --rm -it --pid container:my-chainguard --network container:my-chainguard cgr.dev/chainguard/wolfi-base"
 
 banner "Step 4: Start a debug container with the same UID as the target"
-pe "docker run --rm -it --pid container:my-chainguard --network container:my-chainguard --user 65532:65532 busybox"
+pe "docker run --rm -it --pid container:my-chainguard --network container:my-chainguard --user 65532:65532 cgr.dev/chainguard/wolfi-base"
 
-banner "Step 5: Start a debug container in priveleged mode"
-pe "docker run --rm -it --pid container:my-chainguard --network container:my-chainguard --privileged busybox"
+banner "Step 5: Start a debug container in privileged mode"
+pe "docker run --rm -it --pid container:my-chainguard --network container:my-chainguard --privileged cgr.dev/chainguard/wolfi-base"
 
 banner "Extras: docker diff and cp"
 pe "docker diff my-chainguard"

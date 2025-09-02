@@ -21,10 +21,10 @@ pe "kubectl exec -it nginx-chainguard -- /bin/sh"
 pe "kubectl exec -it nginx-chainguard -- /bin/bash"
 
 banner "Step 2: Start a debug container attached to the target"
-pe "kubectl debug -it nginx-chainguard --image=busybox:latest --target=nginx-chainguard"
+pe "kubectl debug -it nginx-chainguard --image=cgr.dev/chainguard/wolfi-base:latest --target=nginx-chainguard"
 
 banner "Step 3: Use a variant with correct UID"
 pe "kubectl debug -it nginx-chainguard --image=cgr.dev/chainguard/busybox:latest --target=nginx-chainguard -- /bin/sh"
 
 banner "Step 4: Use sysadmin profile"
-pe "kubectl debug -it nginx-chainguard --image=busybox:latest --target=nginx-chainguard --profile sysadmin -- /bin/sh"
+pe "kubectl debug -it nginx-chainguard --image=cgr.dev/chainguard/wolfi-base:latest --target=nginx-chainguard --profile sysadmin -- /bin/sh"

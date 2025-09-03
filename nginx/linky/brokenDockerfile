@@ -1,4 +1,4 @@
-# Use the official nginx base image
+# Change to the Chainguard nginx image
 FROM cgr.dev/chainguard/nginx:latest
 
 # Define the environment variable

@@ -1,4 +1,6 @@
-contents:
-  packages:
-    - mariadb-connector-c
-    - mariadb-connector-c-dev
+source: "python"
+custom_overlay:
+  contents:
+    packages:
+      - mariadb-connector-c
+      - mariadb-connector-c-dev

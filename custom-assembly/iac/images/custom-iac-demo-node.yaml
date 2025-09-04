@@ -1,2 +1,4 @@
-contents:
-  packages: []
+source: "node" 
+custom_overlay:
+  contents:
+    packages: []

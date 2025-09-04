@@ -29,13 +29,15 @@ while read -r f; do
   repo="${repo%.yaml}"
   repo="${repo%.yml}"
 
-  # Ensure the repository is configured for custom assembly
-  echo "${repo}: checking the repository is enabled for custom assembly." >&2
-  chainctl image repo list --parent=${org_name} -o json \
-    | jq --arg repo "${repo}" -e \
-      '.items[] | select(.name == $repo) | .sync_config.apkoOverlay != null' \
-      >/dev/null \
-      || (echo "${repo}: ERROR: not a custom assembly enabled repository" >&2; exit 1)
+  # If the repository exists, ensure the repository is configured for custom assembly
+  if [[ -n $(chainctl image repo list --parent="${org_name}" --repo="${repo}" -o id) ]]; then
+    echo "${repo}: checking the repository is enabled for custom assembly." >&2
+    chainctl image repo list --parent=${org_name} -o json \
+      | jq --arg repo "${repo}" -e \
+        '.items[] | select(.name == $repo) | .sync_config.apkoOverlay != null' \
+        >/dev/null \
+        || (echo "${repo}: ERROR: not a custom assembly enabled repository" >&2; exit 1)
+  fi
 
   # Check that every package defined in the yaml file exists in the private APK
   # repository
@@ -43,5 +45,5 @@ while read -r f; do
   while read -r package; do
     echo "${repo}: checking package '${package}' is in ${apk_repo}" >&2
     grep -q "^P:${package}$" "${apk_index}" || (echo "${repo}: ERROR: package '${package}' not found in ${apk_repo}" >&2; exit 1)
-  done < <(yq '.contents.packages[]' "${f}")
+  done < <(yq '.custom_overlay.contents.packages[]' "${f}")
 done < <(find images -type f -name '*.yaml' -o -name '*.yml')

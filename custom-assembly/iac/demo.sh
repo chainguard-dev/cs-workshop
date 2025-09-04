@@ -43,12 +43,6 @@ pe "cat images/custom-iac-demo-python.yaml"
 pe "./presubmit.sh ${ORGANIZATION}"
 pe "git checkout HEAD images/custom-iac-demo-python.yaml"
 
-banner "We'll also get an error if the repo doesn't exist."
-pe "cp images/custom-iac-demo-python.yaml images/custom-iac-demo-foobar.yaml"
-pe "ls -l images/"
-pe "./presubmit.sh ${ORGANIZATION}"
-pe "rm images/custom-iac-demo-foobar.yaml"
-
 banner "Check that the presubmit checks are still passing."
 pe "./presubmit.sh ${ORGANIZATION}"
 

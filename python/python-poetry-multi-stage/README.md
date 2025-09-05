@@ -14,7 +14,7 @@ This example uses a multi-stage image build for a 'Hello World' Python applicati
 
 - Docker
 - Grype, Trivy, and/or Docker Scout
-- Access to the Chainguard Private Registry
+- [chainctl](https://edu.chainguard.dev/chainguard/chainguard-images/chainguard-registry/authenticating/#authenticating-with-the-chainctl-credential-helper) and `image.pull` access to the Chainguard Private Registry
 
 ### Setup
 
@@ -108,6 +108,11 @@ dfc --org="chainlabs-roadshows" ./Dockerfile > ./Dockerfile.chainguard
 Check out the results for yourself, and see how much smaller the image and its attack surface are!
 
 ```sh
+# Authenticate & Pull
+chainctl auth configure-docker
+docker pull cgr.dev/chainlabs-roadshows/python:3.11-dev
+docker pull cgr.dev/chainlabs-roadshows/python:3.11
+
 # Benchmark
 docker run --privileged ghcr.io/chps-dev/chps-scorer:latest cgr.dev/chainlabs-roadshows/python:3.11
 

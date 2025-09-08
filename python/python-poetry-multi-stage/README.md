@@ -13,7 +13,7 @@ This example uses a multi-stage image build for a 'Hello World' Python applicati
 ## Prerequisites
 
 - Docker
-- Grype, Trivy, and/or Docker Scout
+- Grype, Trivy, and/or any other container image scanner
 - [chainctl](https://edu.chainguard.dev/chainguard/chainguard-images/chainguard-registry/authenticating/#authenticating-with-the-chainctl-credential-helper) and `image.pull` access to the Chainguard Private Registry
 
 ### Setup
@@ -79,8 +79,6 @@ _Note: All scanners will yield different results. It's recommended to use multip
 grype python-poetry-ubi:latest
 # and/or
 trivy image python-poetry-ubi:latest
-# and/or
-docker scout cves python-poetry-ubi:latest
 ```
 
 Holy #$@! We're never going to have any time to develop code if we're stuck justifying vulnerabilities! There has to be a better way?!
@@ -114,7 +112,7 @@ docker pull cgr.dev/chainlabs-roadshows/python:3.11-dev
 docker pull cgr.dev/chainlabs-roadshows/python:3.11
 
 # Benchmark
-docker run --privileged ghcr.io/chps-dev/chps-scorer:latest cgr.dev/chainlabs-roadshows/python:3.11
+docker run --privileged ghcr.io/chps-dev/chps-scorer:latest cgr.dev/chainguard/python:latest
 
 # Build & Test
 docker build -t python-poetry-cgr:latest -f ./answers/Dockerfile.chainguard .
@@ -123,7 +121,6 @@ docker run --rm --name poetry -p 8000:8000 python-poetry-cgr:latest
 # Scan
 grype python-poetry-cgr:latest
 trivy image python-poetry-cgr:latest
-docker scout cves python-poetry-cgr:latest
 ```
 
 ### 6. Use Custom Assembly (CA) to Reduce Build Complexity [WIP]
@@ -147,8 +144,8 @@ There you have it! You have now migrated your first application to leverage mini
 
 **Next, you can eliminate even more supply chain risk in your applications by utilizing Chainguard Libraries!**
 
-- Blog: [Announcing Chainguard Libraries for Python: Malware-Resistant Dependencies Built Securely from Source](https://www.chainguard.dev/unchained/announcing-chainguard-libraries-for-python-malware-resistant-dependencies-built-securely-from-source)
-- Blog: [Guarding the Python Ecosystem Against the Growing Number of Severe Malware Attacks](https://www.chainguard.dev/unchained/guarding-the-python-ecosystem-against-the-growing-number-of-severe-malware-attacks)
-- Blog: [Mitigating Malware in the Python Ecosystem with Chainguard Libraries](https://www.chainguard.dev/unchained/mitigating-malware-in-the-python-ecosystem-with-chainguard-libraries)
-- Blog: [Malware-Resistant Python without the Guesswork](https://www.chainguard.dev/unchained/malware-resistant-python-without-the-guesswork)
-- Docs: [Chainguard Libraries Overview](https://edu.chainguard.dev/chainguard/libraries/overview/)
+- [Announcing Chainguard Libraries for Python: Malware-Resistant Dependencies Built Securely from Source](https://www.chainguard.dev/unchained/announcing-chainguard-libraries-for-python-malware-resistant-dependencies-built-securely-from-source)
+- [Guarding the Python Ecosystem Against the Growing Number of Severe Malware Attacks](https://www.chainguard.dev/unchained/guarding-the-python-ecosystem-against-the-growing-number-of-severe-malware-attacks)
+- [Mitigating Malware in the Python Ecosystem with Chainguard Libraries](https://www.chainguard.dev/unchained/mitigating-malware-in-the-python-ecosystem-with-chainguard-libraries)
+- [Malware-Resistant Python without the Guesswork](https://www.chainguard.dev/unchained/malware-resistant-python-without-the-guesswork)
+- [Chainguard Libraries Overview](https://edu.chainguard.dev/chainguard/libraries/overview/)

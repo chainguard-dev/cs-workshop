@@ -106,10 +106,8 @@ dfc --org="chainlabs-roadshows" ./Dockerfile > ./Dockerfile.chainguard
 Check out the results for yourself, and see how much smaller the image and its attack surface are!
 
 ```sh
-# Authenticate & Pull
+# Authenticate
 chainctl auth configure-docker
-docker pull cgr.dev/chainlabs-roadshows/python:3.11-dev
-docker pull cgr.dev/chainlabs-roadshows/python:3.11
 
 # Benchmark
 docker run --privileged ghcr.io/chps-dev/chps-scorer:latest cgr.dev/chainguard/python:latest

@@ -14,7 +14,7 @@ This example uses a multi-stage image build for a 'Hello World' Python applicati
 
 - Docker
 - Grype, Trivy, and/or any other container image scanner
-- [chainctl](https://edu.chainguard.dev/chainguard/chainguard-images/chainguard-registry/authenticating/#authenticating-with-the-chainctl-credential-helper) and `image.pull` access to the Chainguard Private Registry
+- [chainctl](https://edu.chainguard.dev/chainguard/chainguard-images/chainguard-registry/authenticating/#authenticating-with-the-chainctl-credential-helper) and access to the Chainguard Private Registry via the `roadshow-participant` role
 
 ### Setup
 
@@ -100,7 +100,7 @@ Take a look at `Dockerfile.multi-stage` to see how this is achieved:
 The final step can be executed like so:
 
 ```sh
-dfc --org="chainlabs-roadshows" ./Dockerfile > ./Dockerfile.chainguard
+docker run --rm -v "$PWD":/work cgr.dev/chainguard/dfc --org="chainlabs-roadshows" ./Dockerfile.multi-stage > ./Dockerfile.chainguard
 ```
 
 Check out the results for yourself, and see how much smaller the image and its attack surface are!

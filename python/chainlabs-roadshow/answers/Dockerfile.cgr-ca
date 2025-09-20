@@ -1,0 +1,34 @@
+FROM cgr.dev/chainlabs-roadshows/python:3.12-dev AS builder
+
+USER root
+
+ENV LANG=C.UTF-8 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH="/app/venv/bin:$PATH"
+
+WORKDIR /app
+
+COPY app.py requirements.txt /app/
+COPY templates/index.html /app/templates/
+
+RUN python -m venv /app/venv && \
+    pip install --no-cache-dir -r requirements.txt
+
+FROM cgr.dev/chainlabs-roadshows/python:3.12
+
+WORKDIR /app
+
+ENV PYTHONUNBUFFERED=1 \
+    PATH="/venv/bin:$PATH"
+
+# 4) Copy dependencies and source code to final image
+COPY app.py requirements.txt /app/
+COPY templates/index.html /app/templates/
+COPY --from=builder /app/venv /venv
+
+USER 65532
+
+EXPOSE 5000
+
+ENTRYPOINT [ "python", "app.py" ]

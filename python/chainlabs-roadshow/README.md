@@ -22,17 +22,17 @@ To get started, clone this repo and change into the current directory!
 
 ```sh
 git clone https://github.com/chainguard-dev/cs-workshop.git
-cd cs-workshop/python/python-poetry-multi-stage
+cd cs-workshop/python/chainlabs-roadshow
 ```
 
 ### 1. Benchmark Your Base Image
 
 When building an application on OSS, it's extremely important to choose a secure foundation which minimizes risk and prevents future toil for your organization.
 
-As indicated in `Dockerfile.deb`, our application currently depends on **Python 3.11**, so let's start by using an open source image scorer, [CHPs](https://github.com/chps-dev/chps-scorer), to better understand our foundation.
+As indicated in line 1 of `Dockerfile.deb`, our application currently depends on **Python 3.12**, so let's start by using an open source image scorer, [CHPs](https://github.com/chps-dev/chps-scorer), to better understand our foundation.
 
 ```sh
-docker run --privileged ghcr.io/chps-dev/chps-scorer:latest python:3.11
+docker run --privileged ghcr.io/chps-dev/chps-scorer:latest python:3.12
 ```
 
 Yikes! Our base image scored well on Provenance, but terrible on Minimalism, Configuration, and CVEs. It would really suck to POA&M all these `deb` package vulnerabilities. Maybe we should convince leadership to try a different base image...

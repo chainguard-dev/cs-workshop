@@ -1,0 +1,33 @@
+# 1) Add builder stage
+FROM python:3.12 AS builder
+
+ENV LANG=C.UTF-8 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH="/app/venv/bin:$PATH"
+
+WORKDIR /app
+
+COPY app.py requirements.txt /app/
+COPY templates/index.html /app/templates/
+
+# 2) Create virtual environment
+RUN python -m venv /app/venv && \
+    pip install --no-cache-dir -r requirements.txt
+
+# 3) Add final stage
+FROM python:3.12
+
+WORKDIR /app
+
+ENV PYTHONUNBUFFERED=1 \
+    PATH="/venv/bin:$PATH"
+
+# 4) Copy dependencies and source code to final image
+COPY app.py requirements.txt /app/
+COPY templates/index.html /app/templates/
+COPY --from=builder /app/venv /venv
+
+EXPOSE 5000
+
+ENTRYPOINT [ "python", "app.py" ]

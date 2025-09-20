@@ -12,7 +12,9 @@ WORKDIR /app
 COPY app.py requirements.txt /app/
 COPY templates/index.html /app/templates/
 
-RUN python -m venv /app/venv && \
+RUN apk update && \
+    apk add --no-cache postgresql-dev shadow && \
+    python -m venv /app/venv && \
     pip install --no-cache-dir -r requirements.txt
 
 FROM cgr.dev/chainlabs-roadshows/python:3.12
@@ -22,7 +24,6 @@ WORKDIR /app
 ENV PYTHONUNBUFFERED=1 \
     PATH="/venv/bin:$PATH"
 
-# 4) Copy dependencies and source code to final image
 COPY app.py requirements.txt /app/
 COPY templates/index.html /app/templates/
 COPY --from=builder /app/venv /venv

@@ -14,9 +14,10 @@ COPY app.py requirements.txt /app/
 COPY templates/index.html /app/templates/
 
 # 2) UBI-based images use the dnf package manager instead of apt
+# 3) the libpq-dev package does not exist in the UBI ecosystem. Instead, the libpq-devel package exists
 # 3) The libvshadow-utils package does not exist in the UBI ecoystem. Instead, the shadow-utils package exists
 RUN dnf update -y && \
-    dnf install -y libpq-dev && \
+    dnf install -y libpq-devel shadow-utils && \
     python -m venv /app/venv && \
     pip install --no-cache-dir -r requirements.txt
 

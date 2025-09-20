@@ -1,12 +1,12 @@
 # ChainLabs Roadshow Workshop
 
-Welcome to the ChainLabs Roadshow Workshop! In this workshop, you'll get hands-on experience migrating applications from traditional open source base images to Chainguard’s secure, near-zero CVE images. You’ll learn how to:
+Welcome to the ChainLabs Roadshow Workshop! In this workshop, we'll get hands-on experience migrating applications from traditional open source base images to Chainguard’s secure, near-zero CVE images. we learn how to:
 
 - Migrate applications without adding package managers, installing development tools, or building new pipelines
 - Customize secure images while preserving end-to-end integrity for open source software (OSS)
 - Leverage Chainguard’s CVE remediation SLA to maintain security over time
 
-This example uses a multi-stage image build for a 'Hello World' Python application leveraging poetry, but there are many more Migration Guides available at [https://edu.chainguard.dev/chainguard/migration/](https://edu.chainguard.dev/chainguard/migration/).
+This example uses a 'Dogs vs Cats Voting' Python application, but there are many more Migration Guides available at [https://edu.chainguard.dev/chainguard/migration/](https://edu.chainguard.dev/chainguard/migration/).
 
 **If you need assistance with any steps in the workshop, please raise your hand and a Chainguard Engineer will come by to assist you.**
 
@@ -25,51 +25,69 @@ git clone https://github.com/chainguard-dev/cs-workshop.git
 cd cs-workshop/python/chainlabs-roadshow
 ```
 
-### 1. Benchmark Your Base Image
+### 1. Benchmark the Base Image
 
-When building an application on OSS, it's extremely important to choose a secure foundation which minimizes risk and prevents future toil for your organization.
+When building an application on OSS, it's extremely important to choose a secure foundation which minimizes risk and prevents future toil for the organization.
 
-As indicated in line 1 of `Dockerfile.deb`, our application currently depends on **Python 3.12**, so let's start by using an open source image scorer, [CHPs](https://github.com/chps-dev/chps-scorer), to better understand our foundation.
+As indicated in line 1 of `Dockerfile.deb`, our application currently depends on **Python 3.12**, and we can test it like so:
+
+```sh
+docker build -t voting-app:deb -f Dockerfile.deb .
+docker run --rm -p 5000:5000 voting-app:deb
+
+# Note: We can view the app at http://localhost:5000/
+# Use CTRL + C to exit
+```
+
+To better understand our application's foundation, let's also benchmark the base image via an open source image scorer, [CHPs](https://github.com/chps-dev/chps-scorer):
 
 ```sh
 docker run --privileged ghcr.io/chps-dev/chps-scorer:latest python:3.12
 ```
 
+![Benchmark Output](./img/1.png)
+
 Yikes! Our base image scored well on Provenance, but terrible on Minimalism, Configuration, and CVEs. It would really suck to POA&M all these `deb` package vulnerabilities. Maybe we should convince leadership to try a different base image...
 
-![Benchmark Output](./img/1.jpg)
-
-### 2. Benchmark Your Base Image (Again)
+### 2. Benchmark the Base Image (Again)
 
 Great news: our Engineering team was given the green light to use a UBI-based image instead of a Debian-based one! Let's see how this one looks.
 
 ```sh
-docker run --privileged ghcr.io/chps-dev/chps-scorer:latest registry.access.redhat.com/ubi9/python-311:latest
+docker run --privileged ghcr.io/chps-dev/chps-scorer:latest registry.access.redhat.com/ubi9/python-312:latest
 ```
+
+![Benchmark Output](./img/2.png)
 
 Oh boy - the Configuration improved and there are less High severity vulnerabilities, but our image still received a pretty low score for Minimalism and CVEs. 
 
 But container hardening will have to wait... we need to get this application working for our end user ASAP!
 
-### 3. Build Your Application
+### 3. Build the Application
 
-Let's point the **FROM** line in our Dockerfile to our new UBI-based image, rename that to `Dockerfile.ubi`, and build our application.
+Let's point the **FROM** line in our Dockerfile to our new UBI-based image, rename that to `Dockerfile.ubi`, and rebuild our application.
 
 ```sh
-docker build -t python-poetry-ubi:latest -f Dockerfile.ubi .
+docker build -t voting-app:ubi -f Dockerfile.ubi .
 ```
 
 What happened??? Our Debian-based image built fine. How come the UBI-based one failed? 
 
-_See if you can figure out how to successfully build the UBI-based image without peeking in the `answers/` directory_ 🙂 
+🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂
+
+_See if you can figure out how to successfully build the UBI-based image without peeking in the `answers/` directory!_
+
+🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂
 
 ```sh
 # SOLUTION:
-docker build -t python-poetry-ubi:latest -f ./answers/Dockerfile.ubi-fixed .
-docker run --rm --name poetry -p 8000:8000 python-poetry-ubi:latest
+docker build -t voting-app:ubi -f ./answers/Dockerfile.ubi-fixed .
+docker run --rm -p 5000:5000 voting-app:ubi
 ```
 
-That was painful, but at least we have a working application now. You should now see the hello world page at http://0.0.0.0:8000
+Whew! That was painful, but at least we have a working application now. We can now see the Voting App page at http://localhost:5000
+
+![Voting App](./img/3.png)
 
 ### 4. This Shit is Hard!
 
@@ -78,18 +96,20 @@ Our Project Manager just alerted us that the end user needs a copy of the scan r
 _Note: All scanners will yield different results. It's recommended to use multiple third-party scanners in order to combat false negatives and false positives._
 
 ```sh
-grype python-poetry-ubi:latest
+grype voting-app:ubi
 # and/or
-trivy image python-poetry-ubi:latest
+trivy voting-app:ubi
 ```
+
+![Scan Output](./img/4.png)
 
 Holy #$@! We're never going to have any time to develop code if we're stuck justifying vulnerabilities! There has to be a better way?!
 
-### 5. Minimize Your Attack Surface Using Zero-CVE Images
+### 5. Minimize the Attack Surface Using Zero-CVE Images
 
-👋 Chainguard here! We're here to tell you there is a better way! In fact, we've written many blog posts and a whole [tutorial](https://edu.chainguard.dev/chainguard/chainguard-images/getting-started/python/) about it.
+👋 Chainguard here! We're here to tell you there is a better way! In fact, we've written many blog posts and [tutorials](https://edu.chainguard.dev/chainguard/chainguard-images/getting-started/python/) about it.
 
-The first step is to implement a **multi-stage build** so that your final image includes the minimum components necessary for your application to run. This will eliminate a lot of unecessary software packages and thus reduce your application's attack surface.
+The first step is to implement a **multi-stage build** so that the final image includes the minimum components necessary for the application to run. This will eliminate a lot of unecessary software packages and thus reduce the application's attack surface.
 
 Take a look at `Dockerfile.multi-stage` to see how this is achieved:
 
@@ -97,12 +117,12 @@ Take a look at `Dockerfile.multi-stage` to see how this is achieved:
 2. Create a new virtual environment to cleanly hold the application’s dependencies
 3. Start a new build stage based on a distroless image
 4. Copy the dependencies in the virtual environment from the builder stage, and the source code from the current directory
-5. Execute [DFC](https://github.com/chainguard-dev/dfc) to automatically convert your Dockerfile to use Zero-CVE Images
+5. Execute [DFC](https://github.com/chainguard-dev/dfc) to automatically convert the Dockerfile to use Zero-CVE Images
 
 The final step can be executed like so:
 
 ```sh
-docker run --rm -v "$PWD":/work cgr.dev/chainguard/dfc --org="chainlabs-roadshows" ./Dockerfile.multi-stage > ./Dockerfile.chainguard
+docker run --rm -v "$PWD":/work cgr.dev/chainguard/dfc --org="chainlabs-roadshows" ./Dockerfile.multi-stage > ./Dockerfile.cgr
 ```
 
 Check out the results for yourself, and see how much smaller the image and its attack surface are!
@@ -115,13 +135,19 @@ chainctl auth configure-docker
 docker run --privileged ghcr.io/chps-dev/chps-scorer:latest cgr.dev/chainguard/python:latest
 
 # Build & Test
-docker build -t python-poetry-cgr:latest -f ./answers/Dockerfile.chainguard .
-docker run --rm --name poetry -p 8000:8000 python-poetry-cgr:latest
+docker build -t voting-app:cgr -f ./answers/Dockerfile.cgr .
+docker run --rm -p 5000:5000 voting-app:cgr
 
 # Scan
-grype python-poetry-cgr:latest
-trivy image python-poetry-cgr:latest
+grype voting-app:cgr
+trivy image voting-app:cgr
 ```
+
+![Benchmark Output](./img/5a.png)
+
+🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟🌟
+
+![Scan Output](./img/5b.png)
 
 ### 6. Use Custom Assembly (CA) to Reduce Build Complexity [WIP]
 
@@ -138,13 +164,14 @@ trivy image python-poetry-cgr:latest
     - 14 days High/Medium/Low
 - Preservation of End-to-End Integrity
 
-## Next Steps: Secure Your Application Dependencies
+## Next Steps: Secure the Application Dependencies
 
-There you have it! You have now migrated your first application to leverage minimal, zero-CVE base images that are built from source daily by [Chainguard's Factory](https://www.chainguard.dev/unchained/this-shit-is-hard-inside-the-chainguard-factory).
+There you have it! We have now migrated an application to leverage minimal, zero-CVE base images that are built from source daily by [Chainguard's Factory](https://www.chainguard.dev/unchained/this-shit-is-hard-inside-the-chainguard-factory).
 
-**Next, you can eliminate even more supply chain risk in your applications by utilizing Chainguard Libraries!**
+**Next, we can eliminate even more supply chain risk in our applications by utilizing Chainguard Libraries!**
 - PREVIEW: [http://console.chainguard.dev/?feature.libraries=true](http://console.chainguard.dev/?feature.libraries=true)
 
+Additional Resources:
 - [Announcing Chainguard Libraries for Python: Malware-Resistant Dependencies Built Securely from Source](https://www.chainguard.dev/unchained/announcing-chainguard-libraries-for-python-malware-resistant-dependencies-built-securely-from-source)
 - [Guarding the Python Ecosystem Against the Growing Number of Severe Malware Attacks](https://www.chainguard.dev/unchained/guarding-the-python-ecosystem-against-the-growing-number-of-severe-malware-attacks)
 - [Mitigating Malware in the Python Ecosystem with Chainguard Libraries](https://www.chainguard.dev/unchained/mitigating-malware-in-the-python-ecosystem-with-chainguard-libraries)

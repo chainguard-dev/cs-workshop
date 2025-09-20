@@ -12,7 +12,9 @@ COPY app.py requirements.txt /app/
 COPY templates/index.html /app/templates/
 
 # 2) Create virtual environment
-RUN python -m venv /app/venv && \
+RUN apt update && \
+    apt install -y libpq-dev libvshadow-utils && \
+    python -m venv /app/venv && \
     pip install --no-cache-dir -r requirements.txt
 
 # 3) Add final stage

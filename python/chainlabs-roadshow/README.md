@@ -149,20 +149,41 @@ trivy image voting-app:cgr
 
 ![Scan Output](./img/5b.png)
 
-### 6. Use Custom Assembly (CA) to Reduce Build Complexity [WIP]
+### 6. Use Custom Assembly (CA) to Reduce Build Complexity
 
-- Blog: [Announcing Chainguard Custom Assembly: Image Customization Without Complexity](https://www.chainguard.dev/unchained/announcing-chainguard-custom-assembly-image-customization-without-complexity)
-- Blog: [Custom Assembly and Private APK Repositories are Now Generally Available](https://www.chainguard.dev/unchained/custom-assembly-and-private-apk-repositories-now-generally-available)
-- Docs: [Custom Assembly Overview](https://edu.chainguard.dev/chainguard/chainguard-images/features/ca-docs/custom-assembly/)
+While working with organizations who were building out their Golden Image programs, we heard a common theme of needing to customize images. This is precisely why Chainguard created [Custom Assembly](https://edu.chainguard.dev/chainguard/chainguard-images/features/ca-docs/custom-assembly/), an enterprise feature which solves use cases such as:
+- Required package additions for __every__ image
+- Last-mile customizations to satisfy an application's functional requirements and dependencies
+- All-in-one images which may contain multiple applications
 
-- [ ] _How to include packages like shadow and curl automatically:_
+Custom Assembly allows users to **customize images while retaining Chainguard's CVE remediation SLA** at the Package Level (7 days for Critical CVEs; 14 days for High, Medium, and Low CVEs) as well as **preserving end-to-end intregity** through Chainguard's SLSA Level 3 build pipelines which include things like SBOMs and cryptographic attestations. Today, we are inviting workshop participants to try it for yourselves!
 
-- Customizations Without Build Complexity
-- Automation without Manual Workflows
-- CVE SLA at the Package Level
-    - 7 days Critical
-    - 14 days High/Medium/Low
-- Preservation of End-to-End Integrity
+1. To get started, login to the `chainlabs-roadshows` org at [console.chainguard.dev](https://console.chainguard.dev/auth/login) and click on the **python** image.
+
+![Chainguard Console](./img/6a.png)
+
+2. From there, click the "Customize Image" button in the top-right corner of the page to display a list of all of the packages available that can be added or removed from your Python image.
+
+![Custom Assembly Button](./img/6b.png)
+
+3. Scroll through the list and select or deselect packages to tailor the image to your needs. After selecting your chosen packages, preview the changes and then click the "Apply Changes" button.
+
+![Apply Changes Button](./img/6c.png)
+
+4. Now we can navigate to the **Builds** tab in the console to view build logs and locate our custom-image digests.
+
+![Builds Tab](./img/6d.png)
+
+5. Finally, we can use these prebuilt images to simplify our Dockerfiles and reduce build complexity within our organization.
+
+```sh
+docker build -t voting-app:cgr-ca -f ./answers/Dockerfile.cgr-ca .
+docker run --rm -p 5000:5000 voting-app:cgr-ca
+```
+
+Additional Resources:
+- [Announcing Chainguard Custom Assembly: Image Customization Without Complexity](https://www.chainguard.dev/unchained/announcing-chainguard-custom-assembly-image-customization-without-complexity)
+- [Custom Assembly and Private APK Repositories are Now Generally Available](https://www.chainguard.dev/unchained/custom-assembly-and-private-apk-repositories-now-generally-available)
 
 ## Next Steps: Secure the Application Dependencies
 

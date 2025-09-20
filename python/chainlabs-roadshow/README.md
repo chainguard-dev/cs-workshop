@@ -37,6 +37,8 @@ docker run --privileged ghcr.io/chps-dev/chps-scorer:latest python:3.12
 
 Yikes! Our base image scored well on Provenance, but terrible on Minimalism, Configuration, and CVEs. It would really suck to POA&M all these `deb` package vulnerabilities. Maybe we should convince leadership to try a different base image...
 
+![Benchmark Output](./img/1.jpg)
+
 ### 2. Benchmark Your Base Image (Again)
 
 Great news: our Engineering team was given the green light to use a UBI-based image instead of a Debian-based one! Let's see how this one looks.

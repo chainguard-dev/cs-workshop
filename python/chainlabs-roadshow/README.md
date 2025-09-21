@@ -6,7 +6,7 @@ Welcome to the ChainLabs Roadshow Workshop! In this workshop, we'll get hands-on
 - Customize secure images while preserving end-to-end integrity for open source software (OSS)
 - Leverage Chainguard’s CVE remediation SLA to maintain security over time
 
-This example uses a 'Dogs vs Cats Voting' Python application, but there are many more Migration Guides available at [https://edu.chainguard.dev/chainguard/migration/](https://edu.chainguard.dev/chainguard/migration/).
+This example uses a Python 'Voting' application, but there are many more Migration Guides available at [https://edu.chainguard.dev/chainguard/migration/](https://edu.chainguard.dev/chainguard/migration/).
 
 **If you need assistance with any steps in the workshop, please raise your hand and a Chainguard Engineer will come by to assist you.**
 
@@ -59,7 +59,7 @@ docker run --privileged ghcr.io/chps-dev/chps-scorer:latest registry.access.redh
 
 ![Benchmark Output](./img/2.png)
 
-Oh boy - the Configuration improved and there are less High severity vulnerabilities, but our image still received a pretty low score for Minimalism and CVEs. 
+Oh no - the Configuration improved and there are less High severity vulnerabilities, but our image still received a pretty low score for Minimalism and CVEs. 
 
 But container hardening will have to wait... we need to get this application working for our end user ASAP!
 
@@ -98,7 +98,7 @@ _Note: All scanners will yield different results. It's recommended to use multip
 ```sh
 grype voting-app:ubi
 # and/or
-trivy voting-app:ubi
+trivy image voting-app:ubi
 ```
 
 ![Scan Output](./img/4.png)
@@ -181,7 +181,7 @@ docker build -t voting-app:cgr-ca -f ./answers/Dockerfile.cgr-ca .
 docker run --rm -p 5000:5000 voting-app:cgr-ca
 ```
 
-Additional Resources:
+Additional CA Resources:
 - [Announcing Chainguard Custom Assembly: Image Customization Without Complexity](https://www.chainguard.dev/unchained/announcing-chainguard-custom-assembly-image-customization-without-complexity)
 - [Custom Assembly and Private APK Repositories are Now Generally Available](https://www.chainguard.dev/unchained/custom-assembly-and-private-apk-repositories-now-generally-available)
 
@@ -192,9 +192,6 @@ There you have it! We have now migrated an application to leverage minimal, zero
 **Next, we can eliminate even more supply chain risk in our applications by utilizing Chainguard Libraries!**
 - PREVIEW: [http://console.chainguard.dev/?feature.libraries=true](http://console.chainguard.dev/?feature.libraries=true)
 
-Additional Resources:
+Additional Libraries Resources:
 - [Announcing Chainguard Libraries for Python: Malware-Resistant Dependencies Built Securely from Source](https://www.chainguard.dev/unchained/announcing-chainguard-libraries-for-python-malware-resistant-dependencies-built-securely-from-source)
-- [Guarding the Python Ecosystem Against the Growing Number of Severe Malware Attacks](https://www.chainguard.dev/unchained/guarding-the-python-ecosystem-against-the-growing-number-of-severe-malware-attacks)
-- [Mitigating Malware in the Python Ecosystem with Chainguard Libraries](https://www.chainguard.dev/unchained/mitigating-malware-in-the-python-ecosystem-with-chainguard-libraries)
-- [Malware-Resistant Python without the Guesswork](https://www.chainguard.dev/unchained/malware-resistant-python-without-the-guesswork)
 - [Chainguard Libraries Overview](https://edu.chainguard.dev/chainguard/libraries/overview/)

@@ -10,6 +10,17 @@ This example uses a Python 'Voting' application, but there are many more Migrati
 
 **If you need assistance with any steps in the workshop, please raise your hand and a Chainguard Engineer will come by to assist you.**
 
+### Table of Contents
+
+- [Prerequisites & Setup](#prerequisites)
+- [1. Benchmark the Base Image](#1-benchmark-the-base-image)
+- [2. Benchmark the Base Image (Again)](#2-benchmark-the-base-image-again)
+- [3. Build the Application](#3-build-the-application)
+- [4. This Shit is Hard!](#4-this-shit-is-hard)
+- [5. Minimize the Attack Surface](#5-minimize-the-attack-surface)
+- [6. Reduce Build Complexity](#6-reduce-build-complexity)
+- [Next Steps: Secure the Application Dependencies](#next-steps-secure-the-application-dependencies)
+
 ## Prerequisites
 
 - Docker
@@ -25,7 +36,7 @@ git clone https://github.com/chainguard-dev/cs-workshop.git
 cd cs-workshop/python/chainlabs-roadshow
 ```
 
-### 1. Benchmark the Base Image
+## 1. Benchmark the Base Image
 
 When building an application on OSS, it's extremely important to choose a secure foundation which minimizes risk and prevents future toil for the organization.
 
@@ -49,7 +60,7 @@ docker run --privileged ghcr.io/chps-dev/chps-scorer:latest python:3.12
 
 Yikes! Our base image scored well on Provenance, but terrible on Minimalism, Configuration, and CVEs. It would really suck to POA&M all these `deb` package vulnerabilities. Maybe we should convince leadership to try a different base image...
 
-### 2. Benchmark the Base Image (Again)
+## 2. Benchmark the Base Image (Again)
 
 Great news: our Engineering team was given the green light to use a UBI-based image instead of a Debian-based one! Let's see how this one looks.
 
@@ -63,7 +74,7 @@ Oh no - the Configuration improved and there are less High severity vulnerabilit
 
 But container hardening will have to wait... we need to get this application working for our end user ASAP!
 
-### 3. Build the Application
+## 3. Build the Application
 
 Let's point the **FROM** line in our Dockerfile to our new UBI-based image, rename that to `Dockerfile.ubi`, and rebuild our application.
 
@@ -73,11 +84,9 @@ docker build -t voting-app:ubi -f Dockerfile.ubi .
 
 What happened??? Our Debian-based image built fine. How come the UBI-based one failed? 
 
-🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂
-
 _See if you can figure out how to successfully build the UBI-based image without peeking in the `answers/` directory!_
 
-🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂
+🛑⏱️⏯️😊
 
 ```sh
 # SOLUTION:
@@ -89,7 +98,7 @@ Whew! That was painful, but at least we have a working application now. We can n
 
 ![Voting App](./img/3.png)
 
-### 4. This Shit is Hard!
+## 4. This Shit is Hard!
 
 Our Project Manager just alerted us that the end user needs a copy of the scan results, along with security justifications for any findings. Let's use an open source scanner to see what our future workload looks like 😭
 
@@ -105,7 +114,7 @@ trivy image voting-app:ubi
 
 Holy #$@! We're never going to have any time to develop code if we're stuck justifying vulnerabilities! There has to be a better way?!
 
-### 5. Minimize the Attack Surface Using Zero-CVE Images
+## 5. Minimize the Attack Surface
 
 👋 Chainguard here! We're here to tell you there is a better way! In fact, we've written many blog posts and [tutorials](https://edu.chainguard.dev/chainguard/chainguard-images/getting-started/python/) about it.
 
@@ -149,7 +158,7 @@ trivy image voting-app:cgr
 
 ![Scan Output](./img/5b.png)
 
-### 6. Use Custom Assembly (CA) to Reduce Build Complexity
+## 6. Reduce Build Complexity
 
 While working with organizations who were building out their Golden Image programs, we heard a common theme of needing to customize images. This is precisely why Chainguard created [Custom Assembly](https://edu.chainguard.dev/chainguard/chainguard-images/features/ca-docs/custom-assembly/), an enterprise feature which solves use cases such as:
 - Required package additions for __every__ image

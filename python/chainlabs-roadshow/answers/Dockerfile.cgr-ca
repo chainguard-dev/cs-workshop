@@ -27,8 +27,6 @@ COPY app.py requirements.txt /app/
 COPY templates/index.html /app/templates/
 COPY --from=builder /app/venv /venv
 
-USER 65532
-
 EXPOSE 5000
 
 ENTRYPOINT [ "python", "app.py" ]

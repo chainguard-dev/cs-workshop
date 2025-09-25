@@ -1,6 +1,6 @@
-FROM cgr.dev/chainlabs-roadshows/python-custom:3.12-dev AS builder
+FROM cgr.dev/chainlabs-roadshows/python:3.12-dev AS builder
 
-USER root
+# NOTE) With Custom Assembly, there is no need to switch to a privileged user as we are not installing additional OS packages
 
 ENV LANG=C.UTF-8 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -16,7 +16,7 @@ COPY templates/index.html /app/templates/
 RUN python -m venv /app/venv && \
     pip install --no-cache-dir -r requirements.txt
 
-FROM cgr.dev/chainlabs-roadshows/python-custom:3.12
+FROM cgr.dev/chainlabs-roadshows/python:3.12
 
 WORKDIR /app
 

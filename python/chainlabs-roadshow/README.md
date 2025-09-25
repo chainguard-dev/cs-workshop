@@ -167,7 +167,7 @@ While working with organizations who were building out their Golden Image progra
 
 Custom Assembly allows users to **customize images while retaining Chainguard's CVE remediation SLA** at the Package Level (7 days for Critical CVEs; 14 days for High, Medium, and Low CVEs) as well as **preserving end-to-end intregity** through Chainguard's SLSA Level 3 build pipelines which include things like SBOMs and cryptographic attestations. Today, we are inviting workshop participants to try it for yourselves!
 
-1. To get started, login to the `chainlabs-roadshows` org at [console.chainguard.dev](https://console.chainguard.dev/auth/login) and click on the **python** image.
+1. To get started, login to the `chainlabs-roadshows` org at [http://console.chainguard.dev/?feature.saveAs=true](http://console.chainguard.dev/?feature.saveAs=true) and click on the **python** image.
 
 ![Chainguard Console](./img/6a.png)
 

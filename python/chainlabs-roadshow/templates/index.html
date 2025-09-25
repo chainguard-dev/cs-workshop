@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dogs vs Cats Voting</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .vote-form { background: #f0f0f0; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+        .results { background: #e8f4fd; padding: 20px; border-radius: 5px; }
+        button { background: #007cba; color: white; padding: 10px 20px; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #005a87; }
+        .radio-option { margin: 10px 0; font-size: 18px; }
+        .radio-option input { margin-right: 8px; transform: scale(1.2); }
+        .result-item { margin: 10px 0; padding: 15px; background: white; border-radius: 3px; display: flex; justify-content: space-between; align-items: center; }
+        .vote-count { font-size: 24px; font-weight: bold; color: #007cba; }
+    </style>
+</head>
+<body>
+    <h1>🐕 Dogs vs Cats 🐱</h1>
+    
+    <div class="vote-form">
+        <h2>Which do you prefer?</h2>
+        <form method="POST" action="/vote">
+            <div class="radio-option">
+                <input type="radio" id="dogs" name="option" value="Dogs" required>
+                <label for="dogs">🐕 Dogs</label>
+            </div>
+            <div class="radio-option">
+                <input type="radio" id="cats" name="option" value="Cats" required>
+                <label for="cats">🐱 Cats</label>
+            </div>
+            <br>
+            <button type="submit">Cast Vote</button>
+        </form>
+    </div>
+    
+    <div class="results">
+        <h2>Current Results</h2>
+        {% for option, count in results %}
+            <div class="result-item">
+                <span>
+                    {% if option == 'Dogs' %}🐕{% else %}🐱{% endif %} 
+                    <strong>{{ option }}</strong>
+                </span>
+                <span class="vote-count">{{ count }}</span>
+            </div>
+        {% endfor %}
+        
+        {% if results[0][1] == 0 and results[1][1] == 0 %}
+            <p style="text-align: center; margin-top: 20px;">No votes yet. Be the first to vote!</p>
+        {% endif %}
+    </div>
+</body>
+</html>

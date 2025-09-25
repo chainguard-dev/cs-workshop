@@ -1,0 +1,29 @@
+FROM registry.access.redhat.com/ubi9/python-312:latest
+
+# 1) Unlike the Debian-based image, the UBI-based image starts as a non-root user. In order to execute our RUN commands, we'll need to switch back to a privileged user
+USER root
+
+ENV LANG=C.UTF-8 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH="/app/venv/bin:$PATH"
+
+WORKDIR /app
+
+COPY app.py requirements.txt /app/
+COPY templates/index.html /app/templates/
+
+# 2) UBI-based images use the dnf package manager instead of apt
+# 3) the libpq-dev package does not exist in the UBI ecosystem. Instead, the libpq-devel package exists
+# 3) The libvshadow-utils package does not exist in the UBI ecoystem. Instead, the shadow-utils package exists
+RUN dnf update -y && \
+    dnf install -y libpq-devel shadow-utils && \
+    python -m venv /app/venv && \
+    pip install --no-cache-dir -r requirements.txt
+
+# BONUS) Switch back to the non-root user before starting the application
+USER 1001
+
+EXPOSE 5000
+
+ENTRYPOINT [ "python", "app.py" ]

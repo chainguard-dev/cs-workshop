@@ -1,0 +1,32 @@
+FROM cgr.dev/chainlabs-roadshows/python-custom:3.12-dev AS builder
+
+# NOTE) With Custom Assembly, there is no need to switch to a privileged user as we are not installing additional OS packages
+
+ENV LANG=C.UTF-8 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH="/app/venv/bin:$PATH"
+
+WORKDIR /app
+
+COPY app.py requirements.txt /app/
+COPY templates/index.html /app/templates/
+
+# NOTE) With Custom Assembly, there is no need to include a package manager as the custom image already includes the required packages
+RUN python -m venv /app/venv && \
+    pip install --no-cache-dir -r requirements.txt
+
+FROM cgr.dev/chainlabs-roadshows/python-custom:3.12
+
+WORKDIR /app
+
+ENV PYTHONUNBUFFERED=1 \
+    PATH="/venv/bin:$PATH"
+
+COPY app.py requirements.txt /app/
+COPY templates/index.html /app/templates/
+COPY --from=builder /app/venv /venv
+
+EXPOSE 5000
+
+ENTRYPOINT [ "python", "app.py" ]

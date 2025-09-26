@@ -23,9 +23,18 @@ This example uses a Python 'Voting' application, but there are many more Migrati
 
 ## Prerequisites
 
-- Docker
-- Grype, Trivy, and/or any other container image scanner
+- [Docker](https://www.docker.com/get-started/)
 - [chainctl](https://edu.chainguard.dev/chainguard/chainguard-images/chainguard-registry/authenticating/#authenticating-with-the-chainctl-credential-helper) and access to the Chainguard Private Registry via the `roadshow-participant` role
+
+```sh
+# brew
+brew tap chainguard-dev/tap
+brew install chainctl
+
+# curl
+curl -o chainctl "https://dl.enforce.dev/chainctl/latest/chainctl_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/aarch64/arm64/')"
+sudo install -o $UID -g $(id -g) -m 0755 chainctl /usr/local/bin/ 
+```
 
 ### Setup
 
@@ -53,7 +62,9 @@ docker run --rm -p 5000:5000 voting-app:deb
 To better understand our application's foundation, let's also benchmark the base image via an open source image scorer, [CHPs](https://github.com/chps-dev/chps-scorer):
 
 ```sh
-docker run --privileged ghcr.io/chps-dev/chps-scorer:latest python:3.12
+docker run --rm --privileged \
+ghcr.io/chps-dev/chps-scorer:latest \
+python:3.12
 ```
 
 ![Benchmark Output](./img/1.png)
@@ -65,7 +76,9 @@ Yikes! Our base image scored well on Provenance, but terrible on Minimalism, Con
 Great news: our Engineering team was given the green light to use a UBI-based image instead of a Debian-based one! Let's see how this one looks.
 
 ```sh
-docker run --privileged ghcr.io/chps-dev/chps-scorer:latest registry.access.redhat.com/ubi9/python-312:latest
+docker run --rm --privileged \
+ghcr.io/chps-dev/chps-scorer:latest \
+registry.access.redhat.com/ubi9/python-312:latest
 ```
 
 ![Benchmark Output](./img/2.png)
@@ -105,9 +118,10 @@ Our Project Manager just alerted us that the end user needs a copy of the scan r
 _Note: All scanners will yield different results. It's recommended to use multiple third-party scanners in order to combat false negatives and false positives._
 
 ```sh
-grype voting-app:ubi
-# and/or
-trivy image voting-app:ubi
+docker run --rm \
+-v /var/run/docker.sock:/var/run/docker.sock \
+anchore/grype:latest \
+voting-app:ubi
 ```
 
 ![Scan Output](./img/4.png)
@@ -138,18 +152,23 @@ Check out the results for yourself, and see how much smaller the image and its a
 
 ```sh
 # Authenticate
+chainctl auth login
 chainctl auth configure-docker
 
 # Benchmark
-docker run --privileged ghcr.io/chps-dev/chps-scorer:latest cgr.dev/chainguard/python:latest
+docker run --rm --privileged \
+ghcr.io/chps-dev/chps-scorer:latest \
+cgr.dev/chainguard/python:latest
 
 # Build & Test
 docker build -t voting-app:cgr -f ./answers/Dockerfile.cgr .
 docker run --rm -p 5000:5000 voting-app:cgr
 
 # Scan
-grype voting-app:cgr
-trivy image voting-app:cgr
+docker run --rm \
+-v /var/run/docker.sock:/var/run/docker.sock \
+anchore/grype:latest \
+voting-app:cgr
 ```
 
 ![Benchmark Output](./img/5a.png)
